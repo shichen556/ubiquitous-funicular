@@ -17,9 +17,10 @@ git/GitHub
 	git add .
 	git commit -m "Version base"
 	git log
-3. Deshacer últimos cambios
+3. Deshacer últimos cambios (cargar el ultimo commit que se hizo)
 	git stash
 
+Ejemplos: 
 Conventional commits https://www.conventionalcommits.org/en/v1.0.0/
 git commit -m "[tipo](alcance): [asunto][descripcion]"
 Ej.
@@ -29,11 +30,18 @@ git commit -m "refactor(button.js): Cambiar color del botón-Cambiar color de fo
 	Archivo para decir a git que archivos subir y que otros no
 4. Push
 	(Comandos en GitHub una vez creado el repositorio)
+		
+	git remote add origin https://github.com/shichen556/ubiquitous-funicular.git
+	git branch -M main
+	git push -u origin main
 
-
-# Optional: 
+Optional: 
 	Configurar nombre de la rama principal por defecto:
 		git config --global init.defaultBranch <name>
 
 	Cambiar nombre de la rama:
 		git branch -m <name>
+
+
+
+Modules Installed () from 'C:\\Users\\YIXI\\Desktop\\3D models for Blender Test\\blender_mmd_tools-main.zip' into 'C:\\Users\\YIXI\\AppData\\Roaming\\Blender Foundation\\Blender\\3.3\\scripts\\addons'
