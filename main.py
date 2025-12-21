@@ -2,36 +2,52 @@ import pygame
 from os import path
 from sys import exit
 
-def draw_electric_field(surface, color, spacing = 50):
-    width, height = surface.get_size()
+def draw_electric_field(rect, color, spacing = 50):
+    area_subsurf = screen.subsurface(rect)
+    pygame.draw.rect(screen, (255,255,255), rect, 1)
+    
+    width, height = area_subsurf.get_size()
+    
     arrow_length = 20
     arrow_size = 6
     
     for y in range(spacing//2, height, spacing):
         # Horizontal lines
-        pygame.draw.line(surface, color, (0,y), (width, y), 2)
+        pygame.draw.line(area_subsurf, color, (0,y), (width, y), 2)
         
         # Arrow after a interval
         for x in range(0, width, 100):
-            pygame.draw.line(surface, color,
+            pygame.draw.line(area_subsurf, color,
                              (x, y),
                              (x + arrow_length, y - arrow_size), 2)
-            pygame.draw.line(surface, color,
+            pygame.draw.line(area_subsurf, color,
                              (x, y),
                              (x + arrow_length, y + arrow_size), 2)
             
-def draw_magnetic_field(surface, color_out, color_in, spacing=60, phase=0):
-    width, height = surface.get_size()
+def draw_magnetic_field_out(rect, color_out, spacing=60):
+    area_subsurf = screen.subsurface(rect)
+    pygame.draw.rect(screen, (255,255,255), rect, 1)
     
-    for y in range(spacing//2, height, spacing):
-        for x in range(spacing//2, width, spacing):
-            if(x//spacing + y//spacing + phase) % 2 == 0:
-                # Campo saliente (·)
-                pygame.draw.circle(surface, color_out, (x, y), 4)
-            else:
-                # Campo entrante (x)
-                pygame.draw.line(surface, color_in, (x-4, y-4), (x+4, y+4), 2)
-                pygame.draw.line(surface, color_in, (x-4, y+4), (x+4, y-4), 2)
+    width, height = area_subsurf.get_size()
+    
+    for y in range(spacing//3, height, spacing):
+        for x in range(spacing//3, width, spacing):
+            # Campo saliente (·)
+            pygame.draw.circle(area_subsurf, color_out, (x, y), 12, 1)
+            pygame.draw.circle(area_subsurf, color_out, (x, y), 4)
+                
+def draw_magnetic_field_in(rect, color_in, spacing=60):
+    area_subsurf = screen.subsurface(rect)
+    pygame.draw.rect(screen, (255,255,255), rect, 1)
+    
+    width, height = area_subsurf.get_size()
+    for y in range(spacing//3, height, spacing):
+        for x in range(spacing//3, width, spacing):
+            # Campo entrante (x)
+            pygame.draw.circle(area_subsurf, color_in, (x, y), 12, 1)
+            pygame.draw.line(area_subsurf, color_in, (x-4, y-4), (x+4, y+4), 2)
+            pygame.draw.line(area_subsurf, color_in, (x-4, y+4), (x+4, y-4), 2)
+
 # Initialize pygame
 pygame.init()
 
@@ -94,6 +110,9 @@ exit_button_rect = exit_button_surf.get_rect(center = (central_pos_x, pos_y+inte
 back_button_surf = font_button.render("Back to menu", True, button_color[on_button])
 back_button_rect = back_button_surf.get_rect(center = (100, 40))
 
+area_pos_x = 450
+area_pos_y = 350
+            
 # In-game features
 while True:
     for event in pygame.event.get():
@@ -148,6 +167,7 @@ while True:
         screen.blit(options_button_surf, options_button_rect)
         screen.blit(credits_button_surf, credits_button_rect)
         screen.blit(exit_button_surf, exit_button_rect)
+        
     if not in_menu:
         screen.fill("#0A0A23")
         
@@ -157,21 +177,24 @@ while True:
             
             if pos_x >= 1000:
                 pos_x = -100
-                
+            
+            E_field_color = "#FFD700"
+            B_out_color = "#00FFCC"
+            B_in_color = "#9B30FF"
+            
+            area_rect = pygame.Rect(area_pos_x - 50, area_pos_y - 50, 100, 100)
+            
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                area_pos_x, area_pos_y = pygame.mouse.get_pos()
+                print(area_pos_x, area_pos_y)
+                 
+            draw_magnetic_field_in(area_rect, B_in_color)
+            
             # Negative charge
             electron = pygame.draw.circle(screen, "#1E90FF", (pos_x, 200), 10)
             
             # Positive charge
             proton = pygame.draw.circle(screen, "#FF4500", (pos_x,300), 10)
-            
-            E_field_color = "#FFD700"
-            
-            #draw_electric_field(screen, E_field_color)
-            
-            B_out_color = "#00FFCC"
-            B_in_color = "#9B30FF"
-            
-            draw_magnetic_field(screen, B_out_color, B_in_color)
             
             
             
