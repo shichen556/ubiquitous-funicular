@@ -197,7 +197,6 @@ while True:
             proton = pygame.draw.circle(screen, "#FF4500", (pos_x,300), 10)
             
             
-            
     # Update screen
     pygame.display.update()
     clock.tick(60) # Frame ceiling
