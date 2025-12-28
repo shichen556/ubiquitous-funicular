@@ -174,52 +174,27 @@ class Particle:
         self.charge=charge
         self.mass=mass
         self.q=q
+        self.vel = 5
+        self.v_x = self.vel
+        self.v_y = 0
+        self.angulo = 0
         if charge == "Negative":
             self.color = "#1E90FF"
         else:
             self.color = "#FF4500"
-        
-        self.v_x = 0
-        self.v_y = 0
-        self.acc_x=0
-        self.acc_y=0
-        
-        self.vel = 5
-        self.angle = 0
     
-    def apply_force(self, fx, fy):
-        self.acc_x+=fx/self.mass
-        self.acc_y+=fy/self.mass
-    
-    def update(self, electric_field, magnetic_field):
-        ex,ey=self.calculate_electric_field_force(electric_field)
-        self.apply_force(ex,ey)
+    def update(self, dt):
+        if self.pos_x > 1000 or self.pos_x < -100 or self.pos_y > 800 or self.pos_y < -100:
+            self.reset_pos()
+            
+        if self.is_in_field():
+            # MCU
+            self.v_x = self.vel * cos(self.angulo)
+            self.v_y = self.vel * sin(self.angulo)
         
-        bx,by=self.calculate_magnetic_field(magnetic_field)
-        self.apply_force(bx,by)
-        
-        self.v_x += self.acc_x
-        self.v_y += self.acc_y
-        
+        # MRU
         self.pos_x += self.v_x
         self.pos_y += self.v_y
-        
-        self.acc_x=0
-        self.acc_y=0
-    
-    def calculate_electric_force(self, electric_field):
-        # Usar la carga y el campo eléctrico
-        fx = self.q * electric_field.calculate_force(self.pos_x, self.pos_y, "x")
-        fy = self.q * electric_field.calculate_force(self.pos_x, self.pos_y, "y")
-        return fx, fy
-    
-    def calculate_magnetic_force(self, magnetic_field):
-        bx, by = magnetic_field.calculate_force(self.pos_x, self.pos_y)
-        # Usamos el producto cruzado (v x B) para calcular la fuerza magnética
-        fx = self.vel_y * by - self.vel_x * bx
-        fy = self.vel_x * bx - self.vel_y * by
-        return fx, fy
-    
     
     def reset_pos(self):
         self.pos_x = -100
@@ -235,19 +210,11 @@ class Particle:
         pygame.draw.circle(screen, self.color, (self.pos_x, self.pos_y), 10)
 
 class ElectricField:
-    def __init__(self, rect, strength=1.0, spacing=50):
+    def __init__(self, rect, spacing=50):
         self.rect=rect
-        self.strength=strength
         self.spacing=spacing
         self.color="#FFD700"
     
-    def calculate_foce(self, x,y,direction="x"):
-        # Esto es simplificado: calculamos la fuerza como si el campo eléctrico es uniforme
-        if direction == "x":
-            return self.strength
-        else:
-            return self.strength  # Puede ser diferente si el campo no es uniforme
-        
     def draw(self, screen):
         area_subsurf = screen.subsurface(self.rect)
         pygame.draw.rect(screen, (255,255,255), self.rect, 1)
@@ -271,19 +238,13 @@ class ElectricField:
                                 (x + arrow_length, y + arrow_size), 2)
 
 class MagneticField:
-    def __init__(self, rect, strength=1.0, field_type="out", spacing=60):
+    def __init__(self, rect, field_type="out", spacing=60):
         self.rect=rect
-        self.strength=strength
         self.field_type=field_type
         if field_type == "out":
             self.color = "#00FFCC"
         else:
             self.color = "#9B30FF"
-    
-    def calculate_force(self, x, y):
-        # Simplificado: el campo es uniforme y radia hacia afuera
-        # Devuelve las componentes del campo magnético en x y y
-        return self.strength, self.strength  # Solo una aproximación para ilustrar
     
     def draw(self, screen):
         area_subsurf = screen.subsurface(self.rect)
