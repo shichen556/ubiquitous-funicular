@@ -1,3 +1,7 @@
+"""
+Chapuzada por ChatGPT y Copilot
+"""
+
 import pygame
 from game import Game
 from scenes import MenuScene

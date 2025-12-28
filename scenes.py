@@ -67,11 +67,11 @@ class PlayScene(Scene):
         self.proton = Particle(200, 300, "Positive")
         
         self.electric_field = ElectricField(pygame.Rect(450 - 50, 350 - 50, 100, 100))
-        self.magnetic_field = MagneticField(pygame.Rect(450 - 50, 350 - 50, 100, 100), field_type="in")
+        self.magnetic_field = MagneticField(
+            pygame.Rect(450 - 50, 350 - 50, 100, 100), 
+            field_type="in")
 
-        # Actualizar referencia del campo en las partículas
-        self.electron.field_rect = self.electric_field.rect
-        self.proton.field_rect = self.electric_field.rect
+        self.fields = [self.magnetic_field]
     
     def handle_events(self, events):
         for event in events:
@@ -84,6 +84,10 @@ class PlayScene(Scene):
                 self.magnetic_field.rect.center=pygame.mouse.get_pos()
     
     def update(self, dt):
+        for field in self.fields:
+            if field.contains(self.electron.pos_x, self.electron.pos_y):
+                field.apply_to(self.electron, dt)
+        
         self.electron.update(dt)
         self.proton.update(dt)
     
@@ -91,7 +95,7 @@ class PlayScene(Scene):
         # Background color
         screen.fill("#0A0A23")
         
-        self.electric_field.draw(screen)
+        # self.electric_field.draw(screen)
         self.magnetic_field.draw(screen)
         
         self.electron.draw(screen)
