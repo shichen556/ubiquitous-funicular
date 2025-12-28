@@ -3,36 +3,38 @@ from os import path
 from sys import exit
 from math import sin, cos
 
-# class Options:
-#     def __init__(self, font, text):
-#         self.font=font
-#         self.text=text
-#         self.central_pos_x=WIDTH / 2
+class Options:
+    def __init__(self, font, text):
+        self.font=font
+        self.text=text
+        self.central_pos_x=WIDTH / 2
         
-# class Title(Options):
-#     def __init__(self, font, text):
-#         super().__init__(font, text, central_pos_x)
+class Title(Options):
+    def __init__(self, font, text):
+        super().__init__(font, text, central_pos_x)
     
-# class Button(Options):
-#     def __init__(self, font, text):
-#         super().__init__(font, text, central_pos_x)
+class Button(Options):
+    def __init__(self, font, text):
+        super().__init__(font, text, central_pos_x)
 
-# class Menu:
-#     def __init__(self):
-#         self.opciones = []
+class Menu:
+    def __init__(self):
+        self.title=Title()
+        self.button=Button()
+        self.opciones = []
         
-#     def display_menu():
-#         pass
+    def display_menu():
+        pass
         
 
-# class Particle:
-#     def __init__(self, pos_x, pos_y, charge):
-#         self.pos_x = pos_x
-#         self.pos_y = pos_y
-#         self.charge = charge
+class Particle:
+    def __init__(self, pos_x, pos_y, charge):
+        self.pos_x = pos_x
+        self.pos_y = pos_y
+        self.charge = charge
     
-#     def draw_particle(color):
-#         pygame.draw.circle(screen, color, (pos_x, pos_y), 10)
+    def draw_particle(color):
+        pygame.draw.circle(screen, color, (pos_x, pos_y), 10)
 
 
 def draw_electric_field(rect, spacing = 50):
