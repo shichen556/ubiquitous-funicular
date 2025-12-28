@@ -37,39 +37,33 @@ from math import sin, cos
 
 def draw_electric_field(rect, spacing = 50):
     color = "#FFD700"
-    area_subsurf = screen.subsurface(rect)
     pygame.draw.rect(screen, (255,255,255), rect, 1)
-    
-    width, height = area_subsurf.get_size()
     
     arrow_length = 20
     arrow_size = 6
     
-    for y in range(spacing//2, height, spacing):
+    for y in range(spacing//2, rect.bottom, spacing):
         # Horizontal lines
-        pygame.draw.line(area_subsurf, color, (0,y), (width, y), 2)
+        pygame.draw.line(screen, color, (0,y), (rect.right, y), 2)
         
         # Arrow after a interval
-        for x in range(0, width, 100):
-            pygame.draw.line(area_subsurf, color,
+        for x in range(0, rect.right, 100):
+            pygame.draw.line(screen, color,
                              (x, y),
                              (x + arrow_length, y - arrow_size), 2)
-            pygame.draw.line(area_subsurf, color,
+            pygame.draw.line(screen, color,
                              (x, y),
                              (x + arrow_length, y + arrow_size), 2)
             
 def draw_magnetic_field_out(rect, spacing=60):
     color = "#00FFCC"
-    area_subsurf = screen.subsurface(rect)
     pygame.draw.rect(screen, (255,255,255), rect, 1)
     
-    width, height = area_subsurf.get_size()
-    
-    for y in range(spacing//3, height, spacing):
-        for x in range(spacing//3, width, spacing):
+    for y in range(rect.top + 20, rect.bottom, spacing):
+        for x in range(rect.left + 20, rect.right, spacing):
             # Campo saliente (·)
-            pygame.draw.circle(area_subsurf, color, (x, y), 12, 1)
-            pygame.draw.circle(area_subsurf, color, (x, y), 4)
+            pygame.draw.circle(screen, color, (x, y), 12, 1)
+            pygame.draw.circle(screen, color, (x, y), 4)
                 
 def draw_magnetic_field_in(rect, spacing=60):
     color =  "#9B30FF"
@@ -168,7 +162,7 @@ e_pos_y=200
 # Constantes
 q = 1.602
 m = 9.11
-B = 1
+B = 0.5
 
 # valores MCU
 radio = m*vel/(q*B)
