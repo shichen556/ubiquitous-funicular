@@ -68,6 +68,10 @@ class PlayScene(Scene):
         
         self.electric_field = ElectricField(pygame.Rect(450 - 50, 350 - 50, 100, 100))
         self.magnetic_field = MagneticField(pygame.Rect(450 - 50, 350 - 50, 100, 100), field_type="in")
+
+        # Actualizar referencia del campo en las partículas
+        self.electron.field_rect = self.electric_field.rect
+        self.proton.field_rect = self.electric_field.rect
     
     def handle_events(self, events):
         for event in events:
@@ -80,8 +84,8 @@ class PlayScene(Scene):
                 self.magnetic_field.rect.center=pygame.mouse.get_pos()
     
     def update(self, dt):
-        self.electron.update(self.electric_field, self.magnetic_field)
-        self.proton.update(self.electric_field, self.magnetic_field)
+        self.electron.update(dt)
+        self.proton.update(dt)
     
     def draw(self, screen):
         # Background color
@@ -99,8 +103,29 @@ class PlayScene(Scene):
     def go_back(self):
         self.game.change_scene(MenuScene(self.game))
         
-class PauseScene:
-    pass
+class PauseScene(Scene):
+    def __init__(self, game):
+        super().__init__(game)
 
-class OptionsScene:
-    pass
+    def handle_events(self, events):
+        pass
+
+    def update(self, dt):
+        pass
+
+    def draw(self, screen):
+        pass
+
+
+class OptionsScene(Scene):
+    def __init__(self, game):
+        super().__init__(game)
+
+    def handle_events(self, events):
+        pass
+
+    def update(self, dt):
+        pass
+
+    def draw(self, screen):
+        pass

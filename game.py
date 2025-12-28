@@ -1,7 +1,7 @@
 import pygame
 
 class Game:
-    def __init__(self, width, height):
+    def __init__(self, width=900, height=700):
         # Set up pygame screen
         self.WIDTH = width
         self.HEIGHT = height
@@ -11,20 +11,24 @@ class Game:
         # Framerate control
         self.running = True
         self.clock = pygame.time.Clock()
-        self.scene = None
+        self.current_scene = None
     
     def change_scene(self, new_scene):
         self.current_scene = new_scene
     
     def run(self):
-        events = pygame.event.get()
+        while self.running:
+            dt = self.clock.tick(60) / 1000
+            
+            events = pygame.event.get()
+            for event in events:
+                if event.type == pygame.QUIT:
+                    self.running = False
+            
+            self.current_scene.handle_events(events)
+            self.current_scene.update(dt)
+            self.current_scene.draw(self.screen)
+            
+            pygame.display.update()
         
-        self.current_scene.handle_events(events)
-        
-        dt = pygame.time.get_ticks() / 1000
-        self.current_scene.update(dt)
-        
-        self.current_scene.draw(self.screen)
-        
-        pygame.display.update()
-        self.clock.tick(60)
+        pygame.quit()

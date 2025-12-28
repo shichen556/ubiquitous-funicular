@@ -25,6 +25,7 @@ class Game:
         # Framerate control
         self.clock = pygame.time.Clock()
         self.running = True
+        self.current_scene=None
     
     def change_scene(self, scene):
         self.current_scene = scene
@@ -97,8 +98,12 @@ class PlayScene(Scene):
         self.proton = Particle(200, 300, "Positive")
         
         self.electric_field = ElectricField(pygame.Rect(450 - 50, 350 - 50, 100, 100))
-        self.magnetic_field = MagneticField(pygame.Rect(450 - 50, 350 - 50, 100, 100), field_type="in")
-    
+        self.magnetic_field = MagneticField(
+            pygame.Rect(450 - 50, 350 - 50, 100, 100), 
+            field_type="in")
+        
+        self.fields = [self.magnetic_field]
+        
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
@@ -110,18 +115,21 @@ class PlayScene(Scene):
                 self.magnetic_field.rect.center=pygame.mouse.get_pos()
     
     def update(self, dt):
+        for field in self.fields:
+            if field.contains(self.electron.pos_x, self.electron.pos_y):
+                field.apply_to(self.electron, dt)
         self.electron.update(dt)
-        self.proton.update(dt)
+        # self.proton.update(dt)
     
     def draw(self, screen):
         # Background color
         screen.fill("#0A0A23")
         
-        self.electric_field.draw(screen)
+        # self.electric_field.draw(screen)
         self.magnetic_field.draw(screen)
         
         self.electron.draw(screen)
-        self.proton.draw(screen)
+        # self.proton.draw(screen)
         
         back_button = Button(50,50,200,50, "Back to Menu", self.go_back)
         back_button.draw(screen)
@@ -129,11 +137,32 @@ class PlayScene(Scene):
     def go_back(self):
         self.game.change_scene(MenuScene(self.game))
         
-class PauseScene:
-    pass
+class PauseScene(Scene):
+    def __init__(self, game):
+        self.game = game
 
-class OptionsScene:
-    pass
+    def handle_events(self, events):
+        pass
+
+    def update(self, dt):
+        pass
+
+    def draw(self, screen):
+        pass
+
+
+class OptionsScene(Scene):
+    def __init__(self, game):
+        self.game = game
+
+    def handle_events(self, events):
+        pass
+
+    def update(self, dt):
+        pass
+
+    def draw(self, screen):
+        pass
 
 class Button:
     def __init__(self, x, y, width, height, text, action):
@@ -187,10 +216,10 @@ class Particle:
         if self.pos_x > 1000 or self.pos_x < -100 or self.pos_y > 800 or self.pos_y < -100:
             self.reset_pos()
             
-        if self.is_in_field():
-            # MCU
-            self.v_x = self.vel * cos(self.angulo)
-            self.v_y = self.vel * sin(self.angulo)
+        # if self.is_in_field():
+        #     # MCU
+        #     self.v_x = self.vel * cos(self.angulo)
+        #     self.v_y = self.vel * sin(self.angulo)
         
         # MRU
         self.pos_x += self.v_x
@@ -204,12 +233,19 @@ class Particle:
         self.angulo = 0
     
     def is_in_field(self):
-        return self.field_rect.collidepoint(self.pos_x, self.pos_y)
+        return False
     
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, (self.pos_x, self.pos_y), 10)
 
-class ElectricField:
+class Field:
+    def contains(self,x,y):
+        pass
+    
+    def apply_to(self, particle, dt):
+        pass
+    
+class ElectricField(Field):
     def __init__(self, rect, spacing=50):
         self.rect=rect
         self.spacing=spacing
@@ -237,27 +273,39 @@ class ElectricField:
                                 (x, y),
                                 (x + arrow_length, y + arrow_size), 2)
 
-class MagneticField:
+class MagneticField(Field):
     def __init__(self, rect, field_type="out", spacing=60):
         self.rect=rect
         self.field_type=field_type
+        self.spacing=spacing
         if field_type == "out":
             self.color = "#00FFCC"
         else:
             self.color = "#9B30FF"
     
+    def contains(self, x, y):
+        return self.rect.collidepoint(x,y)
+    
+    def apply_to(self, particle, dt):
+        particle.angulo -= 2 * dt
+        particle.v_x = particle.vel * cos(particle.angulo)
+        particle.v_y = particle.vel * sin(particle.angulo)
+    
     def draw(self, screen):
-        area_subsurf = screen.subsurface(self.rect)
         pygame.draw.rect(screen, (255,255,255), self.rect, 1)
         
         for y in range(self.rect.top + 20, self.rect.bottom, self.spacing):
             for x in range(self.rect.left + 20, self.rect.right, self.spacing):
                 if self.field_type=="out":
                     # Campo saliente (·)
-                    pygame.draw.circle(area_subsurf, self.color, (x, y), 12, 1)
-                    pygame.draw.circle(area_subsurf, self.color, (x, y), 4)
+                    pygame.draw.circle(screen, self.color, (x, y), 12, 1)
+                    pygame.draw.circle(screen, self.color, (x, y), 4)
                 elif self.field_type=="in":
                     # Campo entrante (x)
                     pygame.draw.circle(screen, self.color, (x, y), 12, 1)
                     pygame.draw.line(screen, self.color, (x-4, y-4), (x+4, y+4), 2)
                     pygame.draw.line(screen, self.color, (x-4, y+4), (x+4, y-4), 2)
+
+game = Game()
+game.change_scene(MenuScene(game))
+game.run()

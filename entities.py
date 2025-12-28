@@ -41,6 +41,10 @@ class Particle:
         self.angulo = 0
     
     def is_in_field(self):
+        # Este método será usado por las partículas
+        # pero necesita ser actualizado por la escena de juego
+        if not hasattr(self, 'field_rect'):
+            return False
         return self.field_rect.collidepoint(self.pos_x, self.pos_y)
     
     def draw(self, screen):

@@ -1,17 +1,12 @@
 import pygame
 from game import Game
-from scenes import MenuScene, PlayScene
+from scenes import MenuScene
 
 def main():
     pygame.init()
-    
-    game=Game(900,700)
-    
+    game = Game()
     game.change_scene(MenuScene(game))
-    
-    while game.running:
-        game.run()
-    
+    game.run()
     pygame.quit()
 
 if __name__ == "__main__":

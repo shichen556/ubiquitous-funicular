@@ -49,6 +49,6 @@ class MagneticField:
                     pygame.draw.circle(area_subsurf, self.color, (x, y), 4)
                 elif self.field_type=="in":
                     # Campo entrante (x)
-                    pygame.draw.circle(screen, self.color, (x, y), 12, 1)
-                    pygame.draw.line(screen, self.color, (x-4, y-4), (x+4, y+4), 2)
-                    pygame.draw.line(screen, self.color, (x-4, y+4), (x+4, y-4), 2)
+                        pygame.draw.circle(area_subsurf, self.color, (x, y), 12, 1)
+                        pygame.draw.line(area_subsurf, self.color, (x-4, y-4), (x+4, y+4), 2)
+                        pygame.draw.line(area_subsurf, self.color, (x-4, y+4), (x+4, y-4), 2)
