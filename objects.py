@@ -82,10 +82,25 @@ class MagneticField(Field):
                 pygame.draw.circle(self.game.display, self.color_out, (x, y), 12, 1)
                 pygame.draw.circle(self.game.display, self.color_out, (x, y), 4)
 
-class Atom:
-    pass
-            
+class Particle(Object):
+    def __init__(self, game):
+        super().__init__(game)
+        
+        
+    def draw_e(self): 
+        self.color = "#1E90FF"
+        self.e_posx = 50
+        self.e_posy = 200
+        
+        self.electron = pygame.draw.circle(self.game.display, self.color, (e_pos_x, e_pos_y), 10)
 
+    def draw_p(self):
+        self.color = "#FF4500"
+        self.p_posx = 50
+        self.p_posy = 300
+        
+        self.proton = pygame.draw.circle(self.game.display, self.color, (self.p_posx, self.p_posy), 10)
+    
 def rotate(x, y):
     angulo += vel_ang
     

@@ -42,6 +42,9 @@ class Game():
         # Load In-game
         self.mgF = objects.MagneticField(self)
         self.eF = objects.ElectricField(self)
+        
+        self.proton = objects.Particle(self)
+        self.electron = objects.Particle(self)
     
     # Game loop
     def game_loop(self):
@@ -51,9 +54,16 @@ class Game():
                 self.playing = False
                 
             self.display.fill(self.BG_COLOR)
+            
+            # Draw field
             # self.mgF.draw_in()
             # self.mgF.draw_out()
             self.eF.draw_left()
+            
+            # Draw particle
+            self.proton.draw_p()
+            self.electron.draw_e()
+            
             self.window.blit(self.display, (0,0))
             
             pygame.display.update()
