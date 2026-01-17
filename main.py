@@ -1,3 +1,4 @@
+import pygame
 from game import Game
 
 def main():
@@ -7,5 +8,7 @@ def main():
         g.curr_menu.display_menu()
         g.game_loop()
         
+    pygame.quit()
+    
 if __name__ == "__main__":
     main()

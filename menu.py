@@ -15,7 +15,7 @@ class Menu:
         
         self.run_display = True
         self.cursor_rect = pygame.Rect(0,0,20,20)
-        self.offsetx = -100
+        self.offsetx = -75
     
     def draw_cursor(self):
         self.game.draw_text("->", 15, self.cursor_rect.x, self.cursor_rect.y)
@@ -29,50 +29,50 @@ class Menu:
 class MainMenu(Menu):
     def __init__(self, game):
         super().__init__(game)
-        
         self.state = "Start"
-        self.state_list = ["Start", "Options", "Credits"]
-        self.state_dic = {}
         
         SEP = 30
-        OFFSET = 20
+        OFFSET = 30
         
-        # Initialize dic
-        for i in range(len(self.state_list)):
-            self.state_dic[self.state_list[i]] = (self.mid_w, self.mid_w + SEP + i*OFFSET)
-
-        self.cursor_rect.midtop = (self.state_dic["Start"][0] + self.offsetx, self.state_dic["Start"][1])
+        self.startx, self.starty = self.mid_w, self.mid_h + SEP + 0*OFFSET
+        self.optionsx, self.optionsy = self.mid_w, self.mid_h + SEP + 1*OFFSET
+        self.creditsx, self.creditsy = self.mid_w, self.mid_h + SEP + 2*OFFSET
+        self.cursor_rect.midtop = (self.startx + self.offsetx, self.starty)
         
     def display_menu(self):
         self.run_display = True
         while self.run_display:
             self.game.check_events()
-            self.check_inputs()
-            
+            self.check_input()
             self.game.display.fill(self.game.BG_COLOR)
-            
-            self.game.draw_text("Main Menu", 20, self.mid_w, self.mid_h -20)
-            for menu_state in self.state_dic:
-                self.game.draw_text(menu_state, 20, menu_state[0], menu_state[1])
-            
+            self.game.draw_text("Main Menu", 20, self.mid_w, self.mid_h - 20)
+            self.game.draw_text("Start Game", 20, self.startx, self.starty)
+            self.game.draw_text("Options", 20, self.optionsx, self.optionsy)
+            self.game.draw_text("Credits", 20, self.creditsx, self.creditsy)
             self.draw_cursor()
             self.blit_screen()
     
-    def search(self, state):
-        for i in range(len(self.state_list) - 1):
-            if state == self.state_list[i]:
-                return i
-        return 0
-    
     def move_cursor(self):
-        n = self.search(self.state)
-        
         if self.game.DOWN_KEY:
-            self.cursor_rect.midtop = (self.state_dic[self.state_list[n + 1]][0] + self.offsetx, self.state_dic[self.state_list[n + 1]][1])
-            self.state = self.state_dic[self.state_list[n + 1]]
+            if self.state == "Start":
+                self.cursor_rect.midtop = (self.optionsx + self.offsetx, self.optionsy)
+                self.state = "Options"
+            elif self.state == "Options":
+                self.cursor_rect.midtop = (self.creditsx + self.offsetx, self.creditsy)
+                self.state = "Credits"
+            elif self.state == "Credits":
+                self.cursor_rect.midtop = (self.startx + self.offsetx, self.starty)
+                self.state = "Start"
         elif self.game.UP_KEY:
-            self.cursor_rect.midtop = (self.state_dic[self.state_list[n - 1]][0] + self.offsetx, self.state_dic[self.state_list[n - 1]][1])
-            self.state = self.state_dic[self.state_list[n - 1]]
+            if self.state == "Start":
+                self.cursor_rect.midtop = (self.creditsx + self.offsetx, self.creditsy)
+                self.state = "Credits"
+            elif self.state == "Options":
+                self.cursor_rect.midtop = (self.startx + self.offsetx, self.starty)
+                self.state = "Start"
+            elif self.state == "Credits":
+                self.cursor_rect.midtop = (self.optionsx + self.offsetx, self.optionsy)
+                self.state = "Options"
     
     def check_input(self):
         self.move_cursor()
@@ -89,8 +89,49 @@ class OptionsMenu(Menu):
     def __init__(self, game):
         super().__init__(game)
         self.state = "Volume"
-        
-        self.state
+        self.volx, self.voly = self.mid_w, self.mid_h + 20
+        self.controlsx, self.controlsy = self.mid_w, self.mid_h + 40
+        self.cursor_rect.midtop = (self.volx + self.offsetx, self.voly)
+    
+    def display_menu(self):
+        self.run_display = True
+        while self.run_display:
+            self.game.check_events()
+            self.check_inputs()
+            self.game.display.fill(self.game.BG_COLOR)
+            self.game.draw_text("Options", 20, self.mid_w, self.mid_h - 30)
+            self.game.draw_text("Volume", 15, self.volx, self.voly)
+            self.game.draw_text("Controls", 15, self.controlsx, self.controlsy)
+            self.draw_cursor()
+            self.blit_screen()
+    
+    def check_inputs(self):
+        if self.game.BACK_KEY:
+            self.game.curr_menu = self.game.main_menu
+            self.run_display = False
+        elif self.game.UP_KEY or self.game.DOWN_KEY:
+            if self.state == "Volume":
+                self.cursor_rect.midtop = (self.controlsx + self.offsetx, self.controlsy)
+                self.state = "Controls"
+            elif self.state == "Controls":
+                self.cursor_rect.midtop = (self.volx + self.offsetx, self.voly)
+                self.state = "Volume"
+        elif self.game.START_KEY:
+            # TODO: Create a volume menu and a controls menu
+            pass
 
 class CreditsMenu(Menu):
-    pass
+    def __init__(self, game):
+        super().__init__(game)
+    
+    def display_menu(self):
+        self.run_display = True
+        while self.run_display:
+            self.game.check_events()
+            if self.game.START_KEY or self.game.BACK_KEY:
+                self.game.curr_menu = self.game.main_menu
+                self.run_display = False
+            self.game.display.fill(self.game.BG_COLOR)
+            self.game.draw_text("Credits", 20, self.mid_w, self.mid_h - 20)
+            self.game.draw_text("Made by CDcodes", 15, self.mid_w, self.mid_h + 10)
+            self.blit_screen()

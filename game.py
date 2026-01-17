@@ -9,7 +9,7 @@ class Game():
         # Framerate control
         self.running = True
         self.playing = False
-        clock = pygame.time.Clock()
+        self.clock = pygame.time.Clock()
         
         # Keyboard control
         self.UP_KEY = False
@@ -50,6 +50,7 @@ class Game():
             
             pygame.display.update()
             self.reset_keys()
+            self.clock.tick(60)
     
     # Check user keyboard input
     def check_events(self):
@@ -57,7 +58,6 @@ class Game():
             if event.type == pygame.QUIT:
                 self.running, self.playing = False, False
                 self.curr_menu.run_display = False
-                pygame.quit()
                 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
@@ -70,15 +70,15 @@ class Game():
                     self.UP_KEY = True
         
     def reset_keys(self):
-        self.UP_KEY, 
-        self.DOWN_KEY, 
-        self.START_KEY, 
-        self.BACK_KEY = False, False, False, False
+        self.UP_KEY = False
+        self.DOWN_KEY = False
+        self.START_KEY = False
+        self.BACK_KEY = False 
     
     def draw_text(self, text, size, x, y):
         font = pygame.font.SysFont(self.font_name, size)
         
-        text_surf = font.render(text, True, self.MENU_COLOR)
+        text_surf = font.render(text, True, self.MENU_COLOR[0])
         text_rect = text_surf.get_rect(center = (x, y))
         
         self.display.blit(text_surf, text_rect)
