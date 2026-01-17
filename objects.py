@@ -28,39 +28,76 @@ class ElectricField(Field):
     def __init__(self, game):
         super().__init__(game)
         
+        # (AI)
         self.spacing = 30
         
-    def draw_left(self):
         self.color = "#FFD700"
-        pygame.draw.rect(self.game.display, "white", self.square, 1)
         
-        arrow_length = 20
-        arrow_size = 6
+        self.arrow_length = 10
+        self.arrow_size = 6
+        
+        self.arrow_spacing = 50
+    
+    # (AI)
+    def draw_left(self):
+        pygame.draw.rect(self.game.display, "white", self.square, 1)
         
         for y in range(self.square.top + 20, self.square.bottom, self.spacing):
             # Horizontal lines
             pygame.draw.line(self.game.display, self.color, (self.square.left, y), (self.square.right, y), 2)
             
             # Arrow after a interval
-            for x in range(self.square.left, self.square.right, 100):
-                pygame.draw.line(self.game.display, self.color, (x,y), (x + arrow_length, y - arrow_size), 2)
-                pygame.draw.line(self.game.display, self.color, (x,y), (x + arrow_length, y + arrow_size), 2)
+            for x in range(self.square.left + 20, self.square.right, self.arrow_spacing):
+                pygame.draw.line(self.game.display, self.color, (x,y), (x + self.arrow_length, y - self.arrow_size), 2)
+                pygame.draw.line(self.game.display, self.color, (x,y), (x + self.arrow_length, y + self.arrow_size), 2)
     
     def draw_right(self):
-        pass
+        pygame.draw.rect(self.game.display, "white", self.square, 1)
+        
+        for y in range(self.square.top + 20, self.square.bottom, self.spacing):
+            # Horizontal lines
+            pygame.draw.line(self.game.display, self.color, (self.square.left, y), (self.square.right, y), 2)
+            
+            # Arrow after a interval
+            for x in range(self.square.right + 20, self.square.left, -self.arrow_spacing):
+                pygame.draw.line(self.game.display, self.color, (x,y), (x - self.arrow_length, y - self.arrow_size), 2)
+                pygame.draw.line(self.game.display, self.color, (x,y), (x - self.arrow_length, y + self.arrow_size), 2)
+    
     
     def draw_up(self):
-        pass
+        pygame.draw.rect(self.game.display, "white", self.square, 1)
+        
+        for x in range(self.square.left + 20, self.square.right, self.spacing):
+            # Vertical lines
+            pygame.draw.line(self.game.display, self.color, (x, self.square.top), (x, self.square.bottom), 2)
+            
+            # Arrow after a interval
+            for y in range(self.square.top + 20, self.square.bottom, self.arrow_spacing):
+                pygame.draw.line(self.game.display, self.color, (x,y), (x - self.arrow_size, y + self.arrow_length), 2)
+                pygame.draw.line(self.game.display, self.color, (x,y), (x + self.arrow_size, y + self.arrow_length), 2)
+    
     
     def draw_down(self):
-        pass
+        pygame.draw.rect(self.game.display, "white", self.square, 1)
+        
+        for x in range(self.square.left + 20, self.square.right, self.spacing):
+            # Horizontal lines
+            pygame.draw.line(self.game.display, self.color, (x, self.square.top), (x, self.square.bottom), 2)
+            
+            # Arrow after a interval
+            for y in range(self.square.top + 20, self.square.bottom, self.arrow_spacing):
+                pygame.draw.line(self.game.display, self.color, (x,y), (x - self.arrow_size, y + self.arrow_length), 2)
+                pygame.draw.line(self.game.display, self.color, (x,y), (x + self.arrow_size, y + self.arrow_length), 2)
+    
     
 class MagneticField(Field):
     def __init__(self, game):
         super().__init__(game)
         
+        # (AI)
         self.spacing = 60
     
+    # (AI)
     def draw_in(self):
         self.color_in =  "#9B30FF"
         pygame.draw.rect(self.game.display, "white", self.square, 1)
@@ -72,6 +109,7 @@ class MagneticField(Field):
                 pygame.draw.line(self.game.display, self.color_in, (x-4, y-4), (x+4, y+4), 2)
                 pygame.draw.line(self.game.display, self.color_in, (x-4, y+4), (x+4, y-4), 2)
     
+    # (AI)
     def draw_out(self):
         self.color_out = "#00FFCC"
         pygame.draw.rect(self.game.display, "white", self.square, 1)

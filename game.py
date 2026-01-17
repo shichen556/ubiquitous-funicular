@@ -58,7 +58,11 @@ class Game():
             # Draw field
             # self.mgF.draw_in()
             # self.mgF.draw_out()
-            self.eF.draw_left()
+            
+            # self.eF.draw_left()
+            # self.eF.draw_right()
+            # self.eF.draw_up()
+            self.eF.draw_down()
             
             # Draw particle
             self.proton.draw_p()
