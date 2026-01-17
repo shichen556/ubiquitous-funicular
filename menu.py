@@ -18,7 +18,8 @@ class Menu:
         self.offsetx = -int(self.game.DISPLAY_W*0.2)
 
         self.SIZE = int(self.game.DISPLAY_H * 0.1)
-        self.TXT_SIZE=int(self.SIZE*0.8)
+        self.TXT_SIZE = int(self.SIZE*0.8)
+        
     def draw_cursor(self):
         self.game.draw_text("->", int(self.SIZE*0.4), self.cursor_rect.x, self.cursor_rect.y, self.game.TXT_COLOR)
     

@@ -1,5 +1,6 @@
 import pygame
 import menu
+import objects
 
 class Game():
     def __init__(self):
@@ -32,21 +33,27 @@ class Game():
         self.MENU_COLOR = ["#00BFFF", "#2A3B7A"]
         self.TXT_COLOR = "#B0C4FF"
         
-        # Menu options
+        # Load Menu options
         self.main_menu = menu.MainMenu(self)
         self.options = menu.OptionsMenu(self)
         self.credits = menu.CreditsMenu(self)
         self.curr_menu = self.main_menu
+        
+        # Load In-game
+        self.mgF = objects.MagneticField(self)
+        self.eF = objects.ElectricField(self)
     
-    # In-game loop
+    # Game loop
     def game_loop(self):
         while self.playing:
             self.check_events()
-            if self.START_KEY:
+            if self.START_KEY or self.BACK_KEY:
                 self.playing = False
                 
             self.display.fill(self.BG_COLOR)
-            self.draw_text("Thanks for playing", 20, self.DISPLAY_W/2, self.DISPLAY_H/2, self.TXT_COLOR)
+            # self.mgF.draw_in()
+            # self.mgF.draw_out()
+            self.eF.draw_left()
             self.window.blit(self.display, (0,0))
             
             pygame.display.update()
