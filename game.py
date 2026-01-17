@@ -28,6 +28,7 @@ class Game():
         
         # Color palette
         self.BG_COLOR = "#0A0A23"
+        self.TITLE_COLOR = "#00BFFF"
         self.MENU_COLOR = ["#00BFFF", "#2A3B7A"]
         self.TXT_COLOR = "#B0C4FF"
         
@@ -45,7 +46,7 @@ class Game():
                 self.playing = False
                 
             self.display.fill(self.BG_COLOR)
-            self.draw_text("Thanks for playing", 20, self.DISPLAY_W/2, self.DISPLAY_H/2)
+            self.draw_text("Thanks for playing", 20, self.DISPLAY_W/2, self.DISPLAY_H/2, self.TXT_COLOR)
             self.window.blit(self.display, (0,0))
             
             pygame.display.update()
@@ -75,10 +76,10 @@ class Game():
         self.START_KEY = False
         self.BACK_KEY = False 
     
-    def draw_text(self, text, size, x, y):
+    def draw_text(self, text, size, x, y, color):
         font = pygame.font.SysFont(self.font_name, size)
         
-        text_surf = font.render(text, True, self.MENU_COLOR[0])
+        text_surf = font.render(text, True, color)
         text_rect = text_surf.get_rect(center = (x, y))
         
         self.display.blit(text_surf, text_rect)
