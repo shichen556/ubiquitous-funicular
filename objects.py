@@ -28,7 +28,7 @@ class ElectricField(Field):
     def __init__(self, game):
         super().__init__(game)
         
-        self.spacing = 50
+        self.spacing = 30
         
     def draw_left(self):
         self.color = "#FFD700"
@@ -37,12 +37,12 @@ class ElectricField(Field):
         arrow_length = 20
         arrow_size = 6
         
-        for y in range(self.spacing//2, self.square.bottom, self.spacing):
+        for y in range(self.square.top + 20, self.square.bottom, self.spacing):
             # Horizontal lines
-            pygame.draw.line(self.game.display, self.color, (0,y), (self.square.right, y), 2)
+            pygame.draw.line(self.game.display, self.color, (self.square.left, y), (self.square.right, y), 2)
             
             # Arrow after a interval
-            for x in range(0, self.square.right, 100):
+            for x in range(self.square.left, self.square.right, 100):
                 pygame.draw.line(self.game.display, self.color, (x,y), (x + arrow_length, y - arrow_size), 2)
                 pygame.draw.line(self.game.display, self.color, (x,y), (x + arrow_length, y + arrow_size), 2)
     
