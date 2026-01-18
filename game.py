@@ -40,8 +40,8 @@ class Game():
         self.curr_menu = self.main_menu
         
         # Load In-game
-        self.eF = objects.ElectricField(self, (200, 400), (100, 100), "right")
-        self.mgF = objects.MagneticField(self, (200, 150), (50, 220), "out")
+        self.eF = objects.ElectricField(self, (200, 400), (100, 100), "right", 0.001)
+        self.mgF = objects.MagneticField(self, (200, 150), (50, 220), "out", 0.01)
         
         self.proton = objects.Particle(self, (100, 200), (5, 0), "+")
         self.electron = objects.Particle(self, (100, 300), (5, 0), "-")
@@ -69,7 +69,7 @@ class Game():
             self.window.blit(self.display, (0,0))
             
             self.proton.move()
-            self.electron.move()
+            # self.electron.move()
             
             # self.proton.check_eF_collision(self.eF.square)
             # self.electron.check_eF_collision(self.eF.square)
