@@ -1,5 +1,4 @@
 import pygame
-from math import sin, cos
 
 # Allow autocomplete in circular import (AI)
 from typing import TYPE_CHECKING
@@ -7,7 +6,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from game import Game
 
-class Object:
+class Object():
     def __init__(self, game: "Game"):
         self.game = game
         
@@ -23,7 +22,7 @@ class ElectricField(Object):
     def __init__(self, game, type):
         super().__init__(game)
 
-        self.square = pygame.Rect(200, 200, 100, 100)
+        self.square = pygame.Rect(200, 150, 200, 200)
         
         self.spacing = 30
         
@@ -96,44 +95,48 @@ class MagneticField(Object):
                     pygame.draw.circle(self.game.display, self.color_out, (x, y), 4)
 
 class Particle(Object):
-    def __init__(self, game, posx, posy):
+    def __init__(self, game, pos, vel, charge_sign):
         super().__init__(game)
         
-        self.vel = [2, 0]
+        self.pos0x = pos[0]
+        self.pos0y = pos[1]
+        self.rect = pygame.Rect(self.pos0x, self.pos0y, 10, 10)
+        
+        self.vel = [vel[0], vel[1]]
         self.MASS = 9.11
         self.CHARGE_VALUE = 1.602
-        self.CHARGE_SIGN = ""
+        self.charge_sign = charge_sign
         
-        self.posx = posx
-        self.posy = posy
-
-    def draw(self):    
-        self.particle = pygame.draw.circle(self.game.display, self.color, (self.posx, self.posy), 10)
-    
-class Proton(Particle):
-    def __init__(self, game, posx, posy):
-        super().__init__(game, posx, posy)
-        self.color = "#FF4500"
-        self.CHARGE_SIGN = "+"
+    def draw(self):   
+        if self.charge_sign == "+": 
+            self.color = "#FF4500"
+        else:
+            self.color = "#1E90FF"
         
+        pygame.draw.circle(self.game.display, self.color, self.rect.center, 10)
+    
+    def move(self):
+        self.rect.x += self.vel[0]
+        self.rect.y += self.vel[1]
         
-class Electron(Particle):
-    def __init__(self, game, posx, posy):
-        super().__init__(game, posx, posy)
-        self.color = "#1E90FF"
-        self.CHARGE_SIGN = "-"
+        if self.rect.left < 0 or self.rect.right > self.game.DISPLAY_W:
+            self.vel[0] = -self.vel[0]
+        if self.rect.top < 0 or self.rect.bottom > self.game.DISPLAY_H:
+            self.vel[1] = -self.vel[1]
+            
+    def check_eF_collision(self, e_field_rect):
+        if self.rect.colliderect(e_field_rect):
+            self.apply_e_force()
     
-    
-# def rotate(x, y):
-#     angulo += vel_ang
-    
-#     v_x = vel * cos(angulo)
-#     v_y = vel * sin(angulo)
-    
-#     x += v_x
-#     y += v_y
-
-# # valores MCU
-# radio = m*vel/(q*B)
-# angulo = 0
-# vel_ang = vel/radio
+    def apply_e_force(self):
+        if self.charge_sign == "+":
+            self.vel[0] += 1
+        if self.charge_sign == "-":
+            self.vel[0] -= 0.5
+        
+    def check_mgF_collision(self, mg_field_rect):
+        if self.rect.colliderect(mg_field_rect):
+            self.apply_mg_force()
+            
+    def apply_mg_force(self):
+        pass

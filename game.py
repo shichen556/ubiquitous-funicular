@@ -1,4 +1,5 @@
 import pygame
+from math import sin, cos
 import menu
 import objects
 
@@ -43,11 +44,13 @@ class Game():
         self.eF = objects.ElectricField(self, "right")
         self.mgF = objects.MagneticField(self, "out")
         
-        self.proton = objects.Proton(self, 100, 200)
-        self.electron = objects.Electron(self, 100, 300)
+        self.proton = objects.Particle(self, (100, 200), (2, 0), "+")
+        self.electron = objects.Particle(self, (100, 300), (2, 0), "-")
     
     # Game loop
     def game_loop(self):
+        self.reset_pos()
+        
         while self.playing:
             self.check_events()
             if self.START_KEY or self.BACK_KEY:
@@ -57,7 +60,6 @@ class Game():
             
             # Draw field
             self.mgF.draw()
-            
             self.eF.draw()
             
             # Draw particle
@@ -65,6 +67,15 @@ class Game():
             self.electron.draw()
             
             self.window.blit(self.display, (0,0))
+            
+            self.proton.move()
+            self.electron.move()
+            
+            self.proton.check_eF_collision(self.eF.square)
+            self.electron.check_eF_collision(self.eF.square)
+            
+            self.proton.check_mgF_collision(self.mgF.square)
+            self.electron.check_mgF_collision(self.mgF.square)
             
             pygame.display.update()
             self.reset_keys()
@@ -101,3 +112,28 @@ class Game():
         
         self.display.blit(text_surf, text_rect)
     
+    def reset_pos(self):
+        # Set to initial position
+        if self.proton.rect.x != 100:
+            self.proton.rect.x = 100
+        if self.proton.rect.y != 200:
+            self.proton.rect.y = 200
+            
+        if self.electron.rect.x != 100:
+            self.electron.rect.x = 100
+        if self.electron.rect.y != 300:
+            self.electron.rect.y = 300
+
+# def rotate(x, y):
+#     angulo += vel_ang
+    
+#     v_x = vel * cos(angulo)
+#     v_y = vel * sin(angulo)
+    
+#     x += v_x
+#     y += v_y
+
+# # valores MCU
+# radio = m*vel/(q*B)
+# angulo = 0
+# vel_ang = vel/radio
