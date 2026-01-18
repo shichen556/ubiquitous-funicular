@@ -111,6 +111,8 @@ class Particle(Object):
         self.vel0x = vel[0]
         self.vel0y = vel[1]
         self.vel = [vel[0], vel[1]]
+        from math import sqrt
+        self.mod_vel = sqrt(vel[0]**2+vel[1]**2)
         self.angle = 0
         self.ang_vel = 0.05
         

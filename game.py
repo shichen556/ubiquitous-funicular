@@ -45,6 +45,9 @@ class Game():
         
         self.proton = objects.Particle(self, (100, 200), (5, 0), "+")
         self.electron = objects.Particle(self, (100, 300), (5, 0), "-")
+        
+        # Load HUD
+        self.proton_stats = menu.GameMenu(self, (10, self.DISPLAY_H - 210), (300, 200), self.proton)
     
     # Game loop
     def game_loop(self):
@@ -66,9 +69,12 @@ class Game():
             self.proton.draw()
             self.electron.draw()
             
+            # Draw HUD
+            self.proton_stats.draw()
+            
             self.window.blit(self.display, (0,0))
             
-            self.proton.move()
+            # self.proton.move()
             # self.electron.move()
             
             # self.proton.check_eF_collision(self.eF.square)

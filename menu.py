@@ -99,7 +99,6 @@ class MainMenu(Menu):
                 self.game.running = False
             self.run_display = False
             
-    
 class OptionsMenu(Menu):
     def __init__(self, game):
         super().__init__(game)
@@ -154,3 +153,27 @@ class CreditsMenu(Menu):
             self.game.draw_text("Credits", self.SIZE, self.mid_w, self.mid_h - int(self.game.DISPLAY_H*0.2), self.game.TITLE_COLOR)
             self.game.draw_text("Made by CDcodes", self.TXT_SIZE, self.mid_w, self.mid_h + 10, self.game.TXT_COLOR)
             self.blit_screen()
+
+class GameMenu(Menu):
+    def __init__(self, game, pos, size, particle=None, field=None):
+        super().__init__(game)
+        
+        self.rect_ext = pygame.Rect(pos[0], pos[1], size[0], size[1])
+        self.rect_in = pygame.Rect(pos[0] + 5, pos[1] + 5, size[0] - 10, size[1]- 10)
+        
+        # Particle base stats
+        self.mass = particle.MASS
+        self.charge_value = particle.CHARGE_VALUE
+        self.charge_sign = particle.charge_sign
+        
+        self.mod_vel = particle.mod_vel
+        self.pos = [particle.rect.x, particle.rect.y]
+        self.angle = particle.angle
+    
+    def draw(self):
+        pygame.draw.rect(self.game.display, "#3C3C3C", self.rect_ext)
+        pygame.draw.rect(self.game.display, "#787878", self.rect_in)
+    
+    def show_particle_stats(self):
+        pass
+        
