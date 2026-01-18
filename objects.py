@@ -19,10 +19,10 @@ class Object():
         self.game.reset_keys()
         
 class ElectricField(Object):
-    def __init__(self, game, type):
+    def __init__(self, game, pos, size, type):
         super().__init__(game)
 
-        self.square = pygame.Rect(200, 150, 200, 200)
+        self.square = pygame.Rect(pos[0], pos[1], size[0], size[1])
         
         self.spacing = 30
         
@@ -68,10 +68,10 @@ class ElectricField(Object):
                         pygame.draw.line(self.game.display, self.color, (x,y), (x + self.arrow_size, y - self.arrow_length), 2)
     
 class MagneticField(Object):
-    def __init__(self, game, type):
+    def __init__(self, game, pos, size, type):
         super().__init__(game)
         
-        self.square = pygame.Rect(200, 400, 100, 100)
+        self.square = pygame.Rect(pos[0], pos[1], size[0], size[1])
         
         self.spacing = 60
     
@@ -102,7 +102,12 @@ class Particle(Object):
         self.pos0y = pos[1]
         self.rect = pygame.Rect(self.pos0x, self.pos0y, 10, 10)
         
+        self.vel0x = vel[0]
+        self.vel0y = vel[1]
         self.vel = [vel[0], vel[1]]
+        self.angle = 0
+        self.ang_vel = 0.05
+        
         self.MASS = 9.11
         self.CHARGE_VALUE = 1.602
         self.charge_sign = charge_sign
@@ -123,6 +128,14 @@ class Particle(Object):
             self.vel[0] = -self.vel[0]
         if self.rect.top < 0 or self.rect.bottom > self.game.DISPLAY_H:
             self.vel[1] = -self.vel[1]
+    
+    def reset_pos(self):
+        # Set to initial position
+        self.rect.x = self.pos0x
+        self.rect.y = self.pos0y
+        self.angle = 0
+        
+        self.vel = [self.vel0x, self.vel0y]
             
     def check_eF_collision(self, e_field_rect):
         if self.rect.colliderect(e_field_rect):
@@ -134,9 +147,39 @@ class Particle(Object):
         if self.charge_sign == "-":
             self.vel[0] -= 0.5
         
-    def check_mgF_collision(self, mg_field_rect):
-        if self.rect.colliderect(mg_field_rect):
-            self.apply_mg_force()
+    def check_mgF_collision(self, mg_field):
+        if self.rect.colliderect(mg_field.square):
+            self.apply_mg_force(mg_field.type)
             
-    def apply_mg_force(self):
-        pass
+    def apply_mg_force(self, type):
+        from math import sin, cos, sqrt
+        
+        mod_vel = sqrt(self.vel[0]**2 + self.vel[1]**2)
+        
+        if self.charge_sign == "+":
+            if type == "out":
+                self.angle += self.ang_vel
+            if type == "in":
+                self.angle -= self.ang_vel
+        if self.charge_sign == "-":
+            if type == "out":
+                self.angle -= self.ang_vel
+            if type == "in":
+                self.angle += self.ang_vel
+        
+        self.vel[0] = mod_vel * cos(self.angle)
+        self.vel[1] = mod_vel * sin(self.angle)
+
+# def rotate(x, y):
+#     angulo += vel_ang
+    
+#     v_x = vel * cos(angulo)
+#     v_y = vel * sin(angulo)
+    
+#     x += v_x
+#     y += v_y
+
+# # valores MCU
+# radio = m*vel/(q*B)
+# angulo = 0
+# vel_ang = vel/radio
