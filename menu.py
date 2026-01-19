@@ -176,7 +176,7 @@ class GameMenu(Menu):
             decimal_pres = 2
             self.mod_vel = self.particle.mod_vel
             self.velx = round(self.particle.vel[0], decimal_pres)
-            self.vely = round(self.particle.vel[1], decimal_pres)
+            self.vely = round(self.particle.vel[1]*(-1), decimal_pres)
             self.pos = [self.particle.rect.x, self.particle.rect.y]
             self.angle = round(degrees(self.particle.angle), decimal_pres)
             

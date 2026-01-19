@@ -132,12 +132,13 @@ class Particle(Object):
         
         if self.rect.left < 0 or self.rect.right > self.game.DISPLAY_W:
             self.vel[0] = -self.vel[0]
-            self.angle += pi
+            self.angle += pi/2
         if self.rect.top < 0 or self.rect.bottom > self.game.DISPLAY_H:
             self.vel[1] = -self.vel[1]
-            self.angle += pi
+            self.angle += pi/2
+            
         if self.angle > 2*pi:
-            self.angle -= 2*pi
+                self.angle -= 2*pi
     
     def reset_pos(self):
         # Set to initial position
@@ -146,7 +147,8 @@ class Particle(Object):
         self.angle = 0
         
         self.vel = [self.vel0x, self.vel0y]
-            
+    
+    # Electric Field
     def check_eF_collision(self, e_field_rect):
         if self.rect.colliderect(e_field_rect):
             self.apply_e_force()
@@ -156,7 +158,8 @@ class Particle(Object):
             self.vel[0] += 1
         if self.charge_sign == "-":
             self.vel[0] -= 0.5
-        
+    
+    # Magnetic Field
     def check_mgF_collision(self, mg_field):
         if self.rect.colliderect(mg_field.square):
             self.apply_mg_force(mg_field.type, mg_field.B)
