@@ -42,14 +42,19 @@ class Game():
         # Load In-game
         self.E = 0.01
         self.B = 0.05
-        self.eF = objects.ElectricField(self, (200, 350), (100, 100), "right", self.E)
+        
+        self.eF = objects.ElectricField(self, (200, 250), (100, 100), "right", self.E)
         self.mgF = objects.MagneticField(self, (650, 100), (50, 220), "out", self.B)
         
         self.proton = objects.Particle(self, (100, 150), (5.0, 0.0), "+")
         self.electron = objects.Particle(self, (100, 250), (5.0, 0.0), "-")
         
         # Load HUD
-        self.proton_stats = menu.GameMenu(self, (10, self.DISPLAY_H - 140), (350, 130), self.B, self.proton)
+        self.proton_stats = menu.GameMenu(self, (10, self.DISPLAY_H - 140-130), (350, 130), B=self.B, particle=self.proton)
+        self.electron_stats = menu.GameMenu(self, (10, self.DISPLAY_H - 140), (350, 130), B=self.B, particle=self.electron)
+        
+        self.eF_stats = menu.GameMenu(self, (10 + 350, self.DISPLAY_H - 140-130), (175, 130), field=self.eF)
+        self.mgF_stats = menu.GameMenu(self, (10 + 350, self.DISPLAY_H - 140), (175, 130), field=self.mgF)
     
     # Game loop
     def game_loop(self):
@@ -71,15 +76,20 @@ class Game():
             self.proton.draw()
             self.electron.draw()
             
-            # Update stats
-            self.proton_stats.update(self.proton)
-            
             # Draw HUD
             self.proton_stats.show()
+            self.electron_stats.show()
+            
+            self.eF_stats.show()
+            self.mgF_stats.show()
+            
+            # Update stats
+            self.proton_stats.update(self.proton)
+            self.electron_stats.update(self.electron)
             
             self.window.blit(self.display, (0,0))
             
-            self.proton.move()
+            # self.proton.move()
             # self.electron.move()
             
             # self.proton.check_eF_collision(self.eF.square)
