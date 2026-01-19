@@ -43,11 +43,13 @@ class Game():
         self.E = 0.01
         self.B = 0.05
         self.eF = objects.ElectricField(self, (200, 350), (100, 100), "right", self.E)
-        self.mgF = objects.MagneticField(self, (200, 100), (50, 220), "out", self.B)
+        self.mgF = objects.MagneticField(self, (650, 100), (50, 220), "out", self.B)
         
         self.proton = objects.Particle(self, (100, 150), (5.0, 0.0), "+")
         self.electron = objects.Particle(self, (100, 250), (5.0, 0.0), "-")
         
+        # Load HUD
+        self.proton_stats = menu.GameMenu(self, (10, self.DISPLAY_H - 140), (350, 130), self.B, self.proton)
     
     # Game loop
     def game_loop(self):
@@ -69,8 +71,8 @@ class Game():
             self.proton.draw()
             self.electron.draw()
             
-            # Load HUD and update stats
-            self.proton_stats = menu.GameMenu(self, (10, self.DISPLAY_H - 140), (350, 130), self.B, self.proton)
+            # Update stats
+            self.proton_stats.update(self.proton)
             
             # Draw HUD
             self.proton_stats.show()

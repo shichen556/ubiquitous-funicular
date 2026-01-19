@@ -132,13 +132,15 @@ class Particle(Object):
         
         if self.rect.left < 0 or self.rect.right > self.game.DISPLAY_W:
             self.vel[0] = -self.vel[0]
-            self.angle += pi/2
+            self.angle = pi - self.angle
         if self.rect.top < 0 or self.rect.bottom > self.game.DISPLAY_H:
             self.vel[1] = -self.vel[1]
-            self.angle += pi/2
+            self.angle = 2*pi - self.angle
             
         if self.angle > 2*pi:
-                self.angle -= 2*pi
+            self.angle -= 2*pi
+        if self.angle < -2*pi:
+            self.angle += 2*pi
     
     def reset_pos(self):
         # Set to initial position

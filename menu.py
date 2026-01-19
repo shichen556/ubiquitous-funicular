@@ -161,8 +161,11 @@ class GameMenu(Menu):
         self.rect_ext = pygame.Rect(pos[0], pos[1], size[0], size[1])
         self.rect_in = pygame.Rect(pos[0] + 5, pos[1] + 5, size[0] - 10, size[1]- 10)
         
+        self.B = B
+        
         # Particle base stats
         if particle:
+            # Constant values
             from math import degrees
             self.particle = particle
             self.mass = self.particle.MASS
@@ -173,18 +176,18 @@ class GameMenu(Menu):
             else:
                 self.name = "Electron"
             
-            decimal_pres = 2
+            self.decimal_pres = 2
+            
+            # Variables values
             self.mod_vel = self.particle.mod_vel
-            self.velx = round(self.particle.vel[0], decimal_pres)
-            self.vely = round(self.particle.vel[1]*(-1), decimal_pres)
+            self.velx = round(self.particle.vel[0], self.decimal_pres)
+            self.vely = round(self.particle.vel[1]*(-1), self.decimal_pres)
             self.pos = [self.particle.rect.x, self.particle.rect.y]
-            self.angle = round(degrees(self.particle.angle), decimal_pres)
+            self.angle = round(degrees(self.particle.angle), self.decimal_pres)
             
-            self.radio = round(self.mass * self.mod_vel / (self.charge_value * B), decimal_pres)
-            self.ang_vel = round((self.mod_vel / self.radio), decimal_pres)
+            self.radio = round(self.mass * self.mod_vel / (self.charge_value * self.B), self.decimal_pres)
+            self.ang_vel = round((self.mod_vel / self.radio), self.decimal_pres)
             
-        self.B = B
-        
         # Field base stats
         if field:
             self.field = field
@@ -227,4 +230,18 @@ class GameMenu(Menu):
             self.draw_text(f"Angle: {self.angle}°", size, x2, y + offsety*2, color)
             self.draw_text(f"Radio: {self.radio} m", size, x2, y + offsety*3, color)
             self.draw_text(f"Angular velocity: {self.ang_vel} rad/s", size, x2, y + offsety*4, color)
+    
+    def update(self, particle=None, field=None):
+        if self.particle:
+            self.particle=particle
+            from math import degrees
+            self.mod_vel = self.particle.mod_vel
+            self.velx = round(self.particle.vel[0], self.decimal_pres)
+            self.vely = round(self.particle.vel[1]*(-1), self.decimal_pres)
+            self.pos = [self.particle.rect.x, self.particle.rect.y]
+            self.angle = round(degrees(self.particle.angle), self.decimal_pres)
+            
+            self.radio = round(self.mass * self.mod_vel / (self.charge_value * self.B), self.decimal_pres)
+            self.ang_vel = round((self.mod_vel / self.radio), self.decimal_pres)
+        
             
