@@ -16,7 +16,7 @@ class Game():
         self.GAME_W, self.GAME_H = 450, 350
         self.DISPLAY_W, self.DISPLAY_H = 900, 700
         
-        self.display = pygame.Surface((self.GAME_W, self.GAME_H)) # Offscreen
+        self.display = pygame.Surface((self.DISPLAY_W, self.DISPLAY_H)) # Offscreen
         self.window = pygame.display.set_mode((self.DISPLAY_W, self.DISPLAY_H)) # Screen
         pygame.display.set_caption("Runner")
         

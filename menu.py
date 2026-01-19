@@ -22,6 +22,19 @@ class Menu:
         
         pygame.display.update()
         self.game.reset_keys()
+    
+    def draw_text(self, text, size, x, y, color):
+        font = pygame.font.SysFont(self.game.font_name, size)
+        
+        text_surf = font.render(text, True, color)
+        text_rect = text_surf.get_rect(topleft = (x,y))
+        
+        self.game.display.blit(text_surf, text_rect)
+    
+    def show_fps(self):
+        fps = self.game.clock.get_fps()
+        # print(f"{fps:.2f}")
+        self.draw_text(f"FPS: {fps:.2f}", 20, 20, 20, "white")
 
 class MainMenu(Menu):
     def __init__(self, game):
@@ -50,6 +63,9 @@ class MainMenu(Menu):
             self.game.draw_text("Credits", self.TXT_SIZE, self.creditsx, self.creditsy, self.game.MENU_COLOR[int(self.state == "Credits")])
             self.game.draw_text("Exit", self.TXT_SIZE, self.exitx, self.exity, self.game.MENU_COLOR[int(self.state == "Exit")])
             self.draw_cursor()
+            
+            self.game.clock.tick(60)
+            self.show_fps()
             self.blit_screen()
     
     def move_cursor(self):
@@ -197,15 +213,7 @@ class HUD(Menu):
             
             self.pos = [self.field.square.x, self.field.square.y]
             self.type = self.field.type
-            
-    def draw_text(self, text, size, x, y, color):
-        font = pygame.font.SysFont(self.game.font_name, size)
-        
-        text_surf = font.render(text, True, color)
-        text_rect = text_surf.get_rect(topleft = (x,y))
-        
-        self.game.display.blit(text_surf, text_rect)
-    
+ 
     def draw_HUD_rect(self):
         pygame.draw.rect(self.game.display, "#3C3C3C", self.rect_ext)
         pygame.draw.rect(self.game.display, "#787878", self.rect_in)
@@ -262,9 +270,4 @@ class HUD(Menu):
         
         self.radio = round(self.particle.radio, self.decimal_pres)
         self.ang_vel = round(self.particle.ang_vel, self.decimal_pres)
-        
-    def show_fps(self):
-        fps = self.game.clock.get_fps()
-        # print(f"{fps:.2f}")
-        self.draw_text(f"FPS: {fps:.2f}", 20, 20, 20, "white")
         
