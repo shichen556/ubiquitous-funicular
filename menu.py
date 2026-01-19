@@ -211,10 +211,13 @@ class GameMenu(Menu):
         text_rect = text_surf.get_rect(topleft = (x,y))
         
         self.game.display.blit(text_surf, text_rect)
-        
-    def show(self):
+    
+    def draw_HUD(self):
         pygame.draw.rect(self.game.display, "#3C3C3C", self.rect_ext)
         pygame.draw.rect(self.game.display, "#787878", self.rect_in)
+    
+    def show(self):
+        self.draw_HUD()
         
         size = 10
         color = "black"
@@ -265,4 +268,3 @@ class GameMenu(Menu):
         self.radio = round(self.mass * self.mod_vel / (self.charge_value * self.B), self.decimal_pres)
         self.ang_vel = round((self.mod_vel / self.radio), self.decimal_pres)
         
-            

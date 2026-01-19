@@ -40,10 +40,10 @@ class Game():
         self.curr_menu = self.main_menu
         
         # Load In-game
-        self.E = 0.01
+        self.E = 6
         self.B = 0.05
         
-        self.eF = objects.ElectricField(self, (200, 250), (100, 100), "right", self.E)
+        self.eF = objects.ElectricField(self, (200, 100), (100, 300), "right", self.E)
         self.mgF = objects.MagneticField(self, (650, 100), (50, 220), "out", self.B)
         
         self.proton = objects.Particle(self, (100, 150), (5.0, 0.0), "+")
@@ -80,8 +80,8 @@ class Game():
             self.proton_stats.show()
             self.electron_stats.show()
             
-            self.eF_stats.show()
-            self.mgF_stats.show()
+            # self.eF_stats.show()
+            # self.mgF_stats.show()
             
             # Update stats
             self.proton_stats.update(self.proton)
@@ -89,14 +89,15 @@ class Game():
             
             self.window.blit(self.display, (0,0))
             
-            # self.proton.move()
-            # self.electron.move()
+            # Movement
+            self.proton.move()
+            self.electron.move()
             
-            # self.proton.check_eF_collision(self.eF.square)
-            # self.electron.check_eF_collision(self.eF.square)
+            self.proton.check_eF_collision(self.eF)
+            self.electron.check_eF_collision(self.eF)
             
-            self.proton.check_mgF_collision(self.mgF)
-            self.electron.check_mgF_collision(self.mgF)
+            # self.proton.check_mgF_collision(self.mgF)
+            # self.electron.check_mgF_collision(self.mgF)
             
             pygame.display.update()
             self.reset_keys()

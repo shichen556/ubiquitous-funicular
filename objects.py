@@ -116,7 +116,6 @@ class Particle(Object):
         self.angle = 0
         self.ang_vel = 0.05
         
-        
     def draw(self):   
         if self.charge_sign == "+": 
             self.color = "#FF4500"
@@ -151,15 +150,32 @@ class Particle(Object):
         self.vel = [self.vel0x, self.vel0y]
     
     # Electric Field
-    def check_eF_collision(self, e_field_rect):
-        if self.rect.colliderect(e_field_rect):
-            self.apply_e_force()
+    def check_eF_collision(self, e_field):
+        if self.rect.colliderect(e_field.square):
+            self.apply_e_force(e_field.type, e_field.E)
     
-    def apply_e_force(self):
-        if self.charge_sign == "+":
-            self.vel[0] += 1
-        if self.charge_sign == "-":
-            self.vel[0] -= 0.5
+    def apply_e_force(self, type, E):
+        acc = self.CHARGE_VALUE * E / self.MASS
+        if type == "up":
+            if self.charge_sign == "+":
+                self.vel[1] -= acc
+            if self.charge_sign == "-":
+                self.vel[1] += acc
+        if type == "down":
+            if self.charge_sign == "+":
+                self.vel[1] += acc
+            if self.charge_sign == "-":
+                self.vel[1] -= acc
+        if type == "left":
+            if self.charge_sign == "+":
+                self.vel[0] -= acc
+            if self.charge_sign == "-":
+                self.vel[0] += acc
+        if type == "right":
+            if self.charge_sign == "+":
+                self.vel[0] += acc
+            if self.charge_sign == "-":
+                self.vel[0] -= acc
     
     # Magnetic Field
     def check_mgF_collision(self, mg_field):
