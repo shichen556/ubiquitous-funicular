@@ -132,8 +132,10 @@ class Particle(Object):
         
         if self.rect.left < 0 or self.rect.right > self.game.DISPLAY_W:
             self.vel[0] = -self.vel[0]
+            self.angle += pi
         if self.rect.top < 0 or self.rect.bottom > self.game.DISPLAY_H:
             self.vel[1] = -self.vel[1]
+            self.angle += pi
         if self.angle > 2*pi:
             self.angle -= 2*pi
     
@@ -161,9 +163,9 @@ class Particle(Object):
             
     def apply_mg_force(self, type, B):
         from math import sin, cos, sqrt, atan2
-        mod_vel = sqrt(self.vel[0]**2 + self.vel[1]**2)
-        radio = self.MASS * mod_vel / (self.CHARGE_VALUE * B)
-        self.vel_ang = mod_vel / radio
+        self.mod_vel = sqrt(self.vel[0]**2 + self.vel[1]**2)
+        radio = self.MASS * self.mod_vel / (self.CHARGE_VALUE * B)
+        self.vel_ang = self.mod_vel / radio
         self.angle = atan2(self.vel[1], self.vel[0])
         
         if self.charge_sign == "+":
@@ -178,6 +180,6 @@ class Particle(Object):
             if type == "in":
                 self.angle += self.ang_vel
         
-        self.vel[0] = mod_vel * cos(self.angle)
-        self.vel[1] = mod_vel * sin(self.angle)
+        self.vel[0] = self.mod_vel * cos(self.angle)
+        self.vel[1] = self.mod_vel * sin(self.angle)
         

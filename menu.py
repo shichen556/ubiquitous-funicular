@@ -155,25 +155,76 @@ class CreditsMenu(Menu):
             self.blit_screen()
 
 class GameMenu(Menu):
-    def __init__(self, game, pos, size, particle=None, field=None):
+    def __init__(self, game, pos, size, B, particle=None, field=None):
         super().__init__(game)
         
         self.rect_ext = pygame.Rect(pos[0], pos[1], size[0], size[1])
         self.rect_in = pygame.Rect(pos[0] + 5, pos[1] + 5, size[0] - 10, size[1]- 10)
         
         # Particle base stats
-        self.mass = particle.MASS
-        self.charge_value = particle.CHARGE_VALUE
-        self.charge_sign = particle.charge_sign
+        if particle:
+            from math import degrees
+            self.particle = particle
+            self.mass = self.particle.MASS
+            self.charge_sign = self.particle.charge_sign
+            self.charge_value = self.particle.CHARGE_VALUE
+            if self.charge_sign == "+":
+                self.name = "Proton"
+            else:
+                self.name = "Electron"
+            
+            decimal_pres = 2
+            self.mod_vel = self.particle.mod_vel
+            self.velx = round(self.particle.vel[0], decimal_pres)
+            self.vely = round(self.particle.vel[1], decimal_pres)
+            self.pos = [self.particle.rect.x, self.particle.rect.y]
+            self.angle = round(degrees(self.particle.angle), decimal_pres)
+            
+            self.radio = round(self.mass * self.mod_vel / (self.charge_value * B), decimal_pres)
+            self.ang_vel = round((self.mod_vel / self.radio), decimal_pres)
+            
+        self.B = B
         
-        self.mod_vel = particle.mod_vel
-        self.pos = [particle.rect.x, particle.rect.y]
-        self.angle = particle.angle
+        # Field base stats
+        if field:
+            self.field = field
     
-    def draw(self):
+    def draw_text(self, text, size, x, y, color):
+        font = pygame.font.SysFont(self.game.font_name, size)
+        
+        text_surf = font.render(text, True, color)
+        text_rect = text_surf.get_rect(topleft = (x,y))
+        
+        self.game.display.blit(text_surf, text_rect)
+        
+    def show(self):
         pygame.draw.rect(self.game.display, "#3C3C3C", self.rect_ext)
         pygame.draw.rect(self.game.display, "#787878", self.rect_in)
-    
-    def show_particle_stats(self):
-        pass
         
+        # First column
+        sepx = 10
+        x1 = self.rect_in.x + sepx
+        sepy = 10
+        y = self.rect_in.y + sepy
+        offsety = 20
+        size = 10
+        color = "black"
+        
+        # Second column
+        x2 = x1 + (self.rect_ext.width*0.5)
+        
+        if self.particle:
+            # First column: Constants
+            self.draw_text(f"Particle: {self.name}", size, x1, y + offsety*0, color)
+            self.draw_text(f"Mass: {self.mass}*10^-31 kg", size, x1, y + offsety*1, color)
+            self.draw_text(f"Charge sign: {self.charge_sign}", size, x1, y + offsety*2, color)
+            self.draw_text(f"Charge value: {self.charge_value}*10^-19 C", size, x1, y + offsety*3, color)
+            self.draw_text(f"Velocity: {self.mod_vel:.3} m/s", size, x1, y + offsety*4, color)
+            
+            # Second Column: Variables
+            self.draw_text(f"Position (x, y): ({self.pos[0]}, {self.pos[1]}) m", size, x2, y + offsety*0, color)
+            self.draw_text(f"Velocity (vx, vy): ({self.velx}, {self.vely}) m/s", size, x2, y + offsety*1, color)
+            self.draw_text(f"Angle: {self.angle}°", size, x2, y + offsety*2, color)
+            self.draw_text(f"Radio: {self.radio} m", size, x2, y + offsety*3, color)
+            self.draw_text(f"Angular velocity: {self.ang_vel} rad/s", size, x2, y + offsety*4, color)
+            
