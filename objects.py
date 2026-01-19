@@ -116,6 +116,8 @@ class Particle(Object):
         self.angle = 0
         self.ang_vel = 0.05
         
+        self.radio = 0
+        
     def draw(self):   
         if self.charge_sign == "+": 
             self.color = "#FF4500"
@@ -125,27 +127,31 @@ class Particle(Object):
         pygame.draw.circle(self.game.display, self.color, self.rect.center, 10)
     
     def move(self):
-        from math import pi
+        # Movement
         self.rect.x += self.vel[0]
         self.rect.y += self.vel[1]
         
+        # Edge collision
+        from math import pi
         if self.rect.left < 0 or self.rect.right > self.game.DISPLAY_W:
             self.vel[0] = -self.vel[0]
             self.angle = pi - self.angle
         if self.rect.top < 0 or self.rect.bottom > self.game.DISPLAY_H:
             self.vel[1] = -self.vel[1]
             self.angle = 2*pi - self.angle
-            
+        
+        # Angle reset
         if self.angle > 2*pi:
             self.angle -= 2*pi
         if self.angle < -2*pi:
             self.angle += 2*pi
     
     def reset_pos(self):
-        # Set to initial position
+        # Set to initial position and velocity
         self.rect.x = self.pos0x
         self.rect.y = self.pos0y
         self.angle = 0
+        self.radio = 0
         
         self.vel = [self.vel0x, self.vel0y]
     
@@ -154,51 +160,64 @@ class Particle(Object):
         if self.rect.colliderect(e_field.square):
             self.apply_e_force(e_field.type, e_field.E)
     
+    def update_mod_vel(self):
+        from math import sqrt
+        self.mod_vel = sqrt(self.vel[0]**2 + self.vel[1]**2)
+    
     def apply_e_force(self, type, E):
         acc = self.CHARGE_VALUE * E / self.MASS
+        
+        before_vel = self.vel 
         if type == "up":
             if self.charge_sign == "+":
                 self.vel[1] -= acc
             if self.charge_sign == "-":
                 self.vel[1] += acc
+                
         if type == "down":
             if self.charge_sign == "+":
                 self.vel[1] += acc
             if self.charge_sign == "-":
                 self.vel[1] -= acc
+                
         if type == "left":
             if self.charge_sign == "+":
                 self.vel[0] -= acc
             if self.charge_sign == "-":
                 self.vel[0] += acc
+                
         if type == "right":
             if self.charge_sign == "+":
                 self.vel[0] += acc
             if self.charge_sign == "-":
                 self.vel[0] -= acc
-    
+        
+        after_vel = self.vel
+        if after_vel[0] != before_vel[0] or after_vel[1] != before_vel[1]:
+            self.update_mod_vel()
+            
     # Magnetic Field
     def check_mgF_collision(self, mg_field):
         if self.rect.colliderect(mg_field.square):
             self.apply_mg_force(mg_field.type, mg_field.B)
             
     def apply_mg_force(self, type, B):
-        from math import sin, cos, sqrt, atan2
-        self.mod_vel = sqrt(self.vel[0]**2 + self.vel[1]**2)
-        radio = self.MASS * self.mod_vel / (self.CHARGE_VALUE * B)
-        self.vel_ang = self.mod_vel / radio
+        from math import sin, cos, atan2
+        
+        self.radio = self.MASS * self.mod_vel / (self.CHARGE_VALUE * B)
+        self.vel_ang = self.mod_vel / self.radio
         self.angle = atan2(self.vel[1], self.vel[0])
         
-        if self.charge_sign == "+":
-            if type == "out":
+        if type == "out":
+            if self.charge_sign == "+":
                 self.angle += self.ang_vel
-            if type == "in":
+            if self.charge_sign == "-":
                 self.angle -= self.ang_vel
-                
-        if self.charge_sign == "-":
-            if type == "out":
+        
+        if type == "in":
+            if self.charge_sign == "+":
                 self.angle -= self.ang_vel
-            if type == "in":
+            if self.charge_sign == "-":
                 self.angle += self.ang_vel
         
         self.vel[0] = self.mod_vel * cos(self.angle)

@@ -12,17 +12,19 @@ class Game():
         self.playing = False
         self.clock = pygame.time.Clock()
         
+        # Pygame screen setup
+        self.GAME_W, self.GAME_H = 450, 350
+        self.DISPLAY_W, self.DISPLAY_H = 900, 700
+        
+        self.display = pygame.Surface((self.GAME_W, self.GAME_H)) # Offscreen
+        self.window = pygame.display.set_mode((self.DISPLAY_W, self.DISPLAY_H)) # Screen
+        pygame.display.set_caption("Runner")
+        
         # Keyboard control
         self.UP_KEY = False
         self.DOWN_KEY = False
         self.START_KEY = False
         self.BACK_KEY = False
-        
-        # Pygame screen setup
-        self.DISPLAY_W, self.DISPLAY_H = 900, 700
-        self.display = pygame.Surface((self.DISPLAY_W, self.DISPLAY_H)) # Offscreen
-        self.window = pygame.display.set_mode((self.DISPLAY_W, self.DISPLAY_H)) # Screen
-        pygame.display.set_caption("Runner")
         
         # Font
         self.font_name = "Tahoma"
@@ -40,21 +42,23 @@ class Game():
         self.curr_menu = self.main_menu
         
         # Load In-game
-        self.E = 6
+        self.E = 2
         self.B = 0.05
         
-        self.eF = objects.ElectricField(self, (200, 100), (100, 300), "right", self.E)
-        self.mgF = objects.MagneticField(self, (650, 100), (50, 220), "out", self.B)
+        self.eF = objects.ElectricField(self, (200, 100), (100, 220), "right", self.E)
+        self.mgF = objects.MagneticField(self, (400, 100), (50, 220), "out", self.B)
         
         self.proton = objects.Particle(self, (100, 150), (5.0, 0.0), "+")
         self.electron = objects.Particle(self, (100, 250), (5.0, 0.0), "-")
         
         # Load HUD
-        self.proton_stats = menu.GameMenu(self, (10, self.DISPLAY_H - 140-130), (350, 130), B=self.B, particle=self.proton)
-        self.electron_stats = menu.GameMenu(self, (10, self.DISPLAY_H - 140), (350, 130), B=self.B, particle=self.electron)
+        self.proton_stats = menu.HUD(self, (10, self.DISPLAY_H - 140-130), (350, 130), B=self.B, particle=self.proton)
+        self.electron_stats = menu.HUD(self, (10, self.DISPLAY_H - 140), (350, 130), B=self.B, particle=self.electron)
         
-        self.eF_stats = menu.GameMenu(self, (10 + 350, self.DISPLAY_H - 140-130), (175, 130), field=self.eF)
-        self.mgF_stats = menu.GameMenu(self, (10 + 350, self.DISPLAY_H - 140), (175, 130), field=self.mgF)
+        self.eF_stats = menu.HUD(self, (10 + 350, self.DISPLAY_H - 140-130), (175, 130), field=self.eF)
+        self.mgF_stats = menu.HUD(self, (10 + 350, self.DISPLAY_H - 140), (175, 130), field=self.mgF)
+        
+        self.is_draw = False
     
     # Game loop
     def game_loop(self):
@@ -74,18 +78,22 @@ class Game():
             
             # Draw particle
             self.proton.draw()
-            self.electron.draw()
+            # self.electron.draw()
             
             # Draw HUD
-            self.proton_stats.show()
-            self.electron_stats.show()
+            if not self.is_draw:
+                self.proton_stats.show()
+                # self.electron_stats.show()
+                
+                # self.eF_stats.show()
+                # self.mgF_stats.show()
+                self.is_draw = True
             
-            # self.eF_stats.show()
-            # self.mgF_stats.show()
+            self.eF_stats.show_fps()
             
             # Update stats
-            self.proton_stats.update(self.proton)
-            self.electron_stats.update(self.electron)
+            # self.proton_stats.update(self.proton)
+            # self.electron_stats.update(self.electron)
             
             self.window.blit(self.display, (0,0))
             

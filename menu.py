@@ -1,13 +1,7 @@
 import pygame
-
-# Allow autocomplete in circular import (AI)
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from game import Game
     
 class Menu:
-    def __init__(self, game: "Game"):
+    def __init__(self, game):
         self.game = game
         
         self.mid_w = self.game.DISPLAY_W/2
@@ -154,7 +148,7 @@ class CreditsMenu(Menu):
             self.game.draw_text("Made by CDcodes", self.TXT_SIZE, self.mid_w, self.mid_h + 10, self.game.TXT_COLOR)
             self.blit_screen()
 
-class GameMenu(Menu):
+class HUD(Menu):
     def __init__(self, game, pos, size, B=None, particle=None, field=None):
         super().__init__(game)
         
@@ -212,12 +206,12 @@ class GameMenu(Menu):
         
         self.game.display.blit(text_surf, text_rect)
     
-    def draw_HUD(self):
+    def draw_HUD_rect(self):
         pygame.draw.rect(self.game.display, "#3C3C3C", self.rect_ext)
         pygame.draw.rect(self.game.display, "#787878", self.rect_in)
     
     def show(self):
-        self.draw_HUD()
+        self.draw_HUD_rect()
         
         size = 10
         color = "black"
@@ -248,13 +242,14 @@ class GameMenu(Menu):
             self.draw_text(f"Angular velocity: {self.ang_vel} rad/s", size, x2, y + offsety*4, color)
         
         if self.field:
+            # Constants
             self.draw_text(f"Field: {self.name}", size, x1, y + offsety*0, color)
-            self.draw_text(f"Position (x, y): {self.pos[0], self.pos[1]} m", size, x1, y + offsety*1, color)
-            self.draw_text(f"Type: {self.type}", size, x1, y + offsety*2, color)
+            self.draw_text(f"Type: {self.type}", size, x1, y + offsety*1, color)
             if self.name == "Electric field":
-                self.draw_text(f"E: {self.strength} V/m", size, x1, y + offsety*3, color)
+                self.draw_text(f"E: {self.strength} V/m", size, x1, y + offsety*2, color)
             else:
-                self.draw_text(f"B: {self.strength} T", size, x1, y + offsety*3, color)
+                self.draw_text(f"B: {self.strength} T", size, x1, y + offsety*2, color)
+            self.draw_text(f"Position (x, y): {self.pos[0], self.pos[1]} m", size, x1, y + offsety*3, color)
     
     def update(self, particle):
         self.particle=particle
@@ -265,6 +260,11 @@ class GameMenu(Menu):
         self.pos = [self.particle.rect.x, self.particle.rect.y]
         self.angle = round(degrees(self.particle.angle), self.decimal_pres)
         
-        self.radio = round(self.mass * self.mod_vel / (self.charge_value * self.B), self.decimal_pres)
-        self.ang_vel = round((self.mod_vel / self.radio), self.decimal_pres)
+        self.radio = round(self.particle.radio, self.decimal_pres)
+        self.ang_vel = round(self.particle.ang_vel, self.decimal_pres)
+        
+    def show_fps(self):
+        fps = self.game.clock.get_fps()
+        # print(f"{fps:.2f}")
+        self.draw_text(f"FPS: {fps:.2f}", 20, 20, 20, "white")
         
