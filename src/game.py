@@ -1,6 +1,6 @@
 import pygame
-import menu
-import objects
+import src.menu as menu
+import src.objects as objects
 
 class Game():
     def __init__(self):

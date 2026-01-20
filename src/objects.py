@@ -4,7 +4,7 @@ import pygame
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from game import Game
+    from src.game import Game
 
 class Object():
     def __init__(self, game: "Game"):
