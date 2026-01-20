@@ -2,6 +2,8 @@ import pygame
 import menu as menu
 import objects as objects
 
+from debug.debug import debug
+
 class Game():
     def __init__(self):
         # Initialize pygame
@@ -11,6 +13,7 @@ class Game():
         self.running = True
         self.playing = False
         self.clock = pygame.time.Clock()
+        self.FPS = 60
         
         # Pygame screen setup
         self.GAME_W, self.GAME_H = 450, 350
@@ -21,10 +24,8 @@ class Game():
         pygame.display.set_caption("Runner")
         
         # Keyboard control
-        self.UP_KEY = False
-        self.DOWN_KEY = False
-        self.START_KEY = False
-        self.BACK_KEY = False
+        self.actions = {"up": False, "down": False, "left": False, "right": False, 
+                        "start": False, "back": False}
         
         # Font
         self.font_name = "Tahoma"
@@ -67,7 +68,7 @@ class Game():
         
         while self.playing:
             self.check_events()
-            if self.START_KEY or self.BACK_KEY:
+            if self.actions["start"] or self.actions["back"]:
                 self.playing = False
                 
             self.display.fill(self.BG_COLOR)
@@ -82,14 +83,14 @@ class Game():
             
             # Draw HUD
             if not self.is_draw:
-                self.proton_stats.show()
+                # self.proton_stats.show()
                 # self.electron_stats.show()
                 
                 # self.eF_stats.show()
                 # self.mgF_stats.show()
                 self.is_draw = True
             
-            self.eF_stats.show_fps()
+            debug(f"{self.clock.get_fps():.2f}", self.display)
             
             # Update stats
             # self.proton_stats.update(self.proton)
@@ -109,7 +110,7 @@ class Game():
             
             pygame.display.update()
             self.reset_keys()
-            self.clock.tick(60)
+            self.clock.tick(self.FPS)
     
     # Check user keyboard input
     def check_events(self):
@@ -119,20 +120,22 @@ class Game():
                 self.curr_menu.run_display = False
                 
             if event.type == pygame.KEYDOWN:
+                if event.key in [pygame.K_UP, pygame.K_w]:
+                    self.actions["up"] = True
+                if event.key in [pygame.K_DOWN, pygame.K_s]:
+                    self.actions["down"] = True
+                if event.key in [pygame.K_LEFT, pygame.K_a]:
+                    self.actions["left"] = True
+                if event.key in [pygame.K_RIGHT, pygame.K_d]:
+                    self.actions["right"] = True
                 if event.key == pygame.K_RETURN:
-                    self.START_KEY = True
-                if event.key == pygame.K_BACKSPACE or event.key == pygame.K_ESCAPE:
-                    self.BACK_KEY = True
-                if event.key == pygame.K_DOWN:
-                    self.DOWN_KEY = True
-                if event.key == pygame.K_UP:
-                    self.UP_KEY = True
+                    self.actions["start"] = True
+                if event.key in [pygame.K_BACKSPACE, pygame.K_ESCAPE]:
+                    self.actions["back"] = True
         
     def reset_keys(self):
-        self.UP_KEY = False
-        self.DOWN_KEY = False
-        self.START_KEY = False
-        self.BACK_KEY = False 
+        for key in self.actions:
+            self.actions[key] = False
     
     def draw_text(self, text, size, x, y, color):
         font = pygame.font.SysFont(self.font_name, size)

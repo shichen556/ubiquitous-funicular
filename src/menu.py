@@ -1,5 +1,6 @@
 import pygame
-    
+from debug.debug import debug
+
 class Menu:
     def __init__(self, game):
         self.game = game
@@ -30,11 +31,6 @@ class Menu:
         text_rect = text_surf.get_rect(topleft = (x,y))
         
         self.game.display.blit(text_surf, text_rect)
-    
-    def show_fps(self):
-        fps = self.game.clock.get_fps()
-        # print(f"{fps:.2f}")
-        self.draw_text(f"FPS: {fps:.2f}", 20, 20, 20, "white")
 
 class MainMenu(Menu):
     def __init__(self, game):
@@ -64,12 +60,12 @@ class MainMenu(Menu):
             self.game.draw_text("Exit", self.TXT_SIZE, self.exitx, self.exity, self.game.MENU_COLOR[int(self.state == "Exit")])
             self.draw_cursor()
             
-            self.game.clock.tick(60)
-            self.show_fps()
+            debug(f"{self.game.clock.get_fps():.2f}", self.game.display) 
+            self.game.clock.tick(self.game.FPS)
             self.blit_screen()
     
     def move_cursor(self):
-        if self.game.DOWN_KEY:
+        if self.game.actions["down"]:
             if self.state == "Start":
                 self.cursor_rect.midtop = (self.optionsx + self.offsetx, self.optionsy)
                 self.state = "Options"
@@ -82,7 +78,7 @@ class MainMenu(Menu):
             elif self.state == "Exit":
                 self.cursor_rect.midtop = (self.startx + self.offsetx, self.starty)
                 self.state = "Start"
-        elif self.game.UP_KEY:
+        elif self.game.actions["up"]:
             if self.state == "Exit":
                 self.cursor_rect.midtop = (self.creditsx + self.offsetx, self.creditsy)
                 self.state = "Credits"
@@ -98,7 +94,7 @@ class MainMenu(Menu):
     
     def check_input(self):
         self.move_cursor()
-        if self.game.START_KEY:
+        if self.game.actions["start"]:
             if self.state == "Start":
                 self.game.playing = True
             elif self.state == "Options":
@@ -134,17 +130,17 @@ class OptionsMenu(Menu):
             self.blit_screen()
     
     def check_inputs(self):
-        if self.game.BACK_KEY:
+        if self.game.actions["back"]:
             self.game.curr_menu = self.game.main_menu
             self.run_display = False
-        elif self.game.UP_KEY or self.game.DOWN_KEY:
+        elif self.game.actions["up"] or self.game.actions["down"]:
             if self.state == "Volume":
                 self.cursor_rect.midtop = (self.controlsx + self.offsetx, self.controlsy)
                 self.state = "Controls"
             elif self.state == "Controls":
                 self.cursor_rect.midtop = (self.volx + self.offsetx, self.voly)
                 self.state = "Volume"
-        elif self.game.START_KEY:
+        elif self.game.actions["start"]:
             # TODO: Create a volume menu and a controls menu
             pass
 
@@ -156,7 +152,7 @@ class CreditsMenu(Menu):
         self.run_display = True
         while self.run_display:
             self.game.check_events()
-            if self.game.START_KEY or self.game.BACK_KEY:
+            if self.game.actions["start"] or self.game.actions["back"]:
                 self.game.curr_menu = self.game.main_menu
                 self.run_display = False
             self.game.display.fill(self.game.BG_COLOR)
