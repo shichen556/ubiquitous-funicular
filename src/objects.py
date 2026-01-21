@@ -106,10 +106,10 @@ class Particle(Object):
         self.vel = [vel[0], vel[1]]
         from math import sqrt
         self.mod_vel = sqrt(vel[0]**2+vel[1]**2)
-        self.angle = 0
-        self.ang_vel = 0.05
+        self.angle = 0.0
+        self.ang_vel = 0.0
         
-        self.radio = 0
+        self.radio = 0.0
     
     def move(self):
         # Movement
@@ -135,8 +135,9 @@ class Particle(Object):
         # Set to initial position and velocity
         self.rect.x = self.pos0x
         self.rect.y = self.pos0y
-        self.angle = 0
-        self.radio = 0
+        self.angle = 0.0
+        self.radio = 0.0
+        self.ang_vel = 0.0
         
         self.vel = [self.vel0x, self.vel0y]
     

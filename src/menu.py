@@ -38,18 +38,6 @@ class HUD(Menu):
         pygame.draw.rect(self.game.display, "#3C3C3C", self.rect_ext)
         pygame.draw.rect(self.game.display, "#787878", self.rect_in)
         
-    def update(self, particle):
-        self.particle=particle
-        from math import degrees
-        self.mod_vel = self.particle.mod_vel
-        self.velx = round(self.particle.vel[0], self.decimal_pres)
-        self.vely = round(self.particle.vel[1]*(-1), self.decimal_pres)
-        self.pos = [self.particle.rect.x, self.particle.rect.y]
-        self.angle = round(degrees(self.particle.angle), self.decimal_pres)
-        
-        self.radio = round(self.particle.radio, self.decimal_pres)
-        self.ang_vel = round(self.particle.ang_vel, self.decimal_pres)
-        
 class ParticleHUD(HUD):
     def __init__(self, game, pos, size, B, particle):
         super().__init__(game, pos, size)
@@ -59,7 +47,6 @@ class ParticleHUD(HUD):
         # Constant values
         self.B = B
         
-        from math import degrees
         self.particle = particle
         self.mass = self.particle.MASS
         self.charge_sign = self.particle.charge_sign
@@ -71,32 +58,58 @@ class ParticleHUD(HUD):
         
         self.decimal_pres = 2
         
-        # Variables values
-        self.mod_vel = self.particle.mod_vel
+        # Variables values in certain cases
         self.velx = round(self.particle.vel[0], self.decimal_pres)
         self.vely = round(self.particle.vel[1]*(-1), self.decimal_pres)
-        self.pos = [self.particle.rect.x, self.particle.rect.y]
-        self.angle = round(degrees(self.particle.angle), self.decimal_pres)
         
+        # Electric field: tangencial acceleration (change vel)
+        self.mod_vel = self.particle.mod_vel
+        
+        # Magnetic field: normal acceleration (change direction, vx, vy)
+        from math import degrees
+        self.angle = round(degrees(self.particle.angle), self.decimal_pres)
         self.radio = round(self.mass * self.mod_vel / (self.charge_value * self.B), self.decimal_pres)
         self.ang_vel = round((self.mod_vel / self.radio), self.decimal_pres)
-
-    def show(self):
-        self.draw_HUD_rect()
         
-        # First column: Constants
-        self.draw_text(f"Particle: {self.name}", self.size, self.x1, self.y + self.offsety*0, self.color)
-        self.draw_text(f"Mass: {self.mass}*10^-31 kg", self.size, self.x1, self.y + self.offsety*1, self.color)
-        self.draw_text(f"Charge sign: {self.charge_sign}", self.size, self.x1, self.y + self.offsety*2, self.color)
-        self.draw_text(f"Charge value: {self.charge_value}*10^-19 C", self.size, self.x1, self.y + self.offsety*3, self.color)
+        # Variables values
+        self.pos = [self.particle.rect.x, self.particle.rect.y]
+    
+    def show_constants(self):
+        text = [f"Particle: {self.name}", 
+                f"Mass: {self.mass}*10^-31 kg", 
+                f"Charge sign: {self.charge_sign}", 
+                f"Charge value: {self.charge_value}*10^-19 C"]
+        
+        for i in range(len(text)):
+            self.draw_text(text[i], self.size, self.x1, self.y + self.offsety*i, self.color)
+    
+    def show_variables(self):
         self.draw_text(f"Velocity: {self.mod_vel:.3} m/s", self.size, self.x1, self.y + self.offsety*4, self.color)
-        
-        # Second Column: Variables
         self.draw_text(f"Position (x, y): ({self.pos[0]}, {self.pos[1]}) m", self.size, self.x2, self.y + self.offsety*0, self.color)
         self.draw_text(f"Velocity (vx, vy): ({self.velx}, {self.vely}) m/s", self.size, self.x2, self.y + self.offsety*1, self.color)
         self.draw_text(f"Angle: {self.angle}°", self.size, self.x2, self.y + self.offsety*2, self.color)
         self.draw_text(f"Radio: {self.radio} m", self.size, self.x2, self.y + self.offsety*3, self.color)
         self.draw_text(f"Angular velocity: {self.ang_vel} rad/s", self.size, self.x2, self.y + self.offsety*4, self.color)
+        
+    def show(self):
+        self.draw_HUD_rect()
+        
+        # First column: Constants
+        self.show_constants()
+        # Second Column: Variables
+        self.show_variables()
+
+    def update(self, particle):
+        self.particle=particle
+        from math import degrees
+        self.mod_vel = self.particle.mod_vel
+        self.pos = [self.particle.rect.x, self.particle.rect.y]
+        self.velx = round(self.particle.vel[0], self.decimal_pres)
+        self.vely = round(self.particle.vel[1]*(-1), self.decimal_pres)
+        self.angle = round(degrees(self.particle.angle), self.decimal_pres)
+        
+        self.radio = round(self.particle.radio, self.decimal_pres)
+        self.ang_vel = round(self.particle.ang_vel, self.decimal_pres)
         
 class FieldHUD(HUD):
     def __init__(self, game, pos, size, field):
