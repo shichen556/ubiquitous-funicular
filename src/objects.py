@@ -1,13 +1,7 @@
 import pygame
 
-# Allow autocomplete in circular import (AI)
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from src.game import Game
-
 class Object():
-    def __init__(self, game: "Game"):
+    def __init__(self, game):
         self.game = game
         
         self.run_display = True
@@ -17,26 +11,28 @@ class Object():
 
         pygame.display.update()
         self.game.reset_keys()
-        
-class ElectricField(Object):
-    def __init__(self, game, pos, size, type, E):
-        super().__init__(game)
 
+# Fields
+class Field(Object):
+    def __init__(self, game, pos, size, type, strength):
+        super().__init__(game)
+        self.type = type
+        self.strength = strength
         self.square = pygame.Rect(pos[0], pos[1], size[0], size[1])
         
-        self.spacing = 30
+class ElectricField(Field):
+    def __init__(self, game, pos, size, type, strength):
+        super().__init__(game, pos, size, type, strength)
         
+        self.spacing = 30
+        self.E = strength
+    
+    def draw(self):
         self.color = "#FFD700"
         
         self.arrow_length = 10
         self.arrow_size = 6
-        
         self.arrow_spacing = 50
-        
-        self.type = type
-        self.E = E
-    
-    def draw(self):
         pygame.draw.rect(self.game.display, "white", self.square, 1)
         
         if self.type == "left" or self.type == "right":
@@ -68,16 +64,12 @@ class ElectricField(Object):
                         pygame.draw.line(self.game.display, self.color, (x,y), (x - self.arrow_size, y - self.arrow_length), 2)
                         pygame.draw.line(self.game.display, self.color, (x,y), (x + self.arrow_size, y - self.arrow_length), 2)
     
-class MagneticField(Object):
-    def __init__(self, game, pos, size, type, B):
-        super().__init__(game)
-        
-        self.square = pygame.Rect(pos[0], pos[1], size[0], size[1])
+class MagneticField(Field):
+    def __init__(self, game, pos, size, type, strength):
+        super().__init__(game, pos, size, type, strength)
         
         self.spacing = 60
-    
-        self.type=type
-        self.B = B
+        self.B = strength
         
     def draw(self):
         self.color_in =  "#9B30FF"
@@ -96,6 +88,7 @@ class MagneticField(Object):
                     pygame.draw.circle(self.game.display, self.color_out, (x, y), 12, 1)
                     pygame.draw.circle(self.game.display, self.color_out, (x, y), 4)
 
+# Particles
 class Particle(Object):
     def __init__(self, game, pos, vel, charge_sign):
         super().__init__(game)
@@ -117,14 +110,6 @@ class Particle(Object):
         self.ang_vel = 0.05
         
         self.radio = 0
-        
-    def draw(self):   
-        if self.charge_sign == "+": 
-            self.color = "#FF4500"
-        else:
-            self.color = "#1E90FF"
-        
-        pygame.draw.circle(self.game.display, self.color, self.rect.center, 10)
     
     def move(self):
         # Movement
@@ -155,14 +140,22 @@ class Particle(Object):
         
         self.vel = [self.vel0x, self.vel0y]
     
+    def update_mod_vel(self):
+        from math import sqrt
+        self.mod_vel = sqrt(self.vel[0]**2 + self.vel[1]**2)
+
+class Proton(Particle):
+    def __init__(self, game, pos, vel):
+        super().__init__(game, pos, vel, charge_sign="+")
+    
+    def draw(self):   
+        self.color = "#FF4500"
+        pygame.draw.circle(self.game.display, self.color, self.rect.center, 10)
+    
     # Electric Field
     def check_eF_collision(self, e_field):
         if self.rect.colliderect(e_field.square):
             self.apply_e_force(e_field.type, e_field.E)
-    
-    def update_mod_vel(self):
-        from math import sqrt
-        self.mod_vel = sqrt(self.vel[0]**2 + self.vel[1]**2)
     
     def apply_e_force(self, type, E):
         acc = self.CHARGE_VALUE * E / self.MASS
@@ -171,26 +164,18 @@ class Particle(Object):
         if type == "up":
             if self.charge_sign == "+":
                 self.vel[1] -= acc
-            if self.charge_sign == "-":
-                self.vel[1] += acc
                 
         if type == "down":
             if self.charge_sign == "+":
                 self.vel[1] += acc
-            if self.charge_sign == "-":
-                self.vel[1] -= acc
                 
         if type == "left":
             if self.charge_sign == "+":
                 self.vel[0] -= acc
-            if self.charge_sign == "-":
-                self.vel[0] += acc
                 
         if type == "right":
             if self.charge_sign == "+":
                 self.vel[0] += acc
-            if self.charge_sign == "-":
-                self.vel[0] -= acc
         
         after_vel = self.vel
         if after_vel[0] != before_vel[0] or after_vel[1] != before_vel[1]:
@@ -211,12 +196,68 @@ class Particle(Object):
         if type == "out":
             if self.charge_sign == "+":
                 self.angle += self.ang_vel
-            if self.charge_sign == "-":
-                self.angle -= self.ang_vel
         
         if type == "in":
             if self.charge_sign == "+":
                 self.angle -= self.ang_vel
+        
+        self.vel[0] = self.mod_vel * cos(self.angle)
+        self.vel[1] = self.mod_vel * sin(self.angle)
+        
+class Electron(Particle):
+    def __init__(self, game, pos, vel):
+        super().__init__(game, pos, vel, charge_sign="-")
+
+    def draw(self):   
+        self.color = "#1E90FF"
+        pygame.draw.circle(self.game.display, self.color, self.rect.center, 10)
+    
+    # Electric Field
+    def check_eF_collision(self, e_field):
+        if self.rect.colliderect(e_field.square):
+            self.apply_e_force(e_field.type, e_field.E)
+    
+    def apply_e_force(self, type, E):
+        acc = self.CHARGE_VALUE * E / self.MASS
+        
+        before_vel = self.vel 
+        if type == "up":
+            if self.charge_sign == "-":
+                self.vel[1] += acc
+                
+        if type == "down":
+            if self.charge_sign == "-":
+                self.vel[1] -= acc
+                
+        if type == "left":
+            if self.charge_sign == "-":
+                self.vel[0] += acc
+                
+        if type == "right":
+            if self.charge_sign == "-":
+                self.vel[0] -= acc
+        
+        after_vel = self.vel
+        if after_vel[0] != before_vel[0] or after_vel[1] != before_vel[1]:
+            self.update_mod_vel()
+            
+    # Magnetic Field
+    def check_mgF_collision(self, mg_field):
+        if self.rect.colliderect(mg_field.square):
+            self.apply_mg_force(mg_field.type, mg_field.B)
+            
+    def apply_mg_force(self, type, B):
+        from math import sin, cos, atan2
+        
+        self.radio = self.MASS * self.mod_vel / (self.CHARGE_VALUE * B)
+        self.vel_ang = self.mod_vel / self.radio
+        self.angle = atan2(self.vel[1], self.vel[0])
+        
+        if type == "out":
+            if self.charge_sign == "-":
+                self.angle -= self.ang_vel
+        
+        if type == "in":
             if self.charge_sign == "-":
                 self.angle += self.ang_vel
         

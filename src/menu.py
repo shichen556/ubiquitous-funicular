@@ -1,6 +1,6 @@
 import pygame
 from title import Menu
-from debug import debug
+from debug.debug import debug
 
 class HUD(Menu):
     def __init__(self, game, pos, size, B=None, particle=None, field=None):
