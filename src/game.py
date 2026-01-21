@@ -24,7 +24,7 @@ class Game():
         self.GAME_W, self.GAME_H = 450, 350
         self.DISPLAY_W, self.DISPLAY_H = 900, 700
         
-        self.display = pygame.Surface((self.DISPLAY_W, self.DISPLAY_H)) # Offscreen
+        self.display = pygame.Surface((self.DISPLAY_W, self.DISPLAY_H)) # Title Offscreen
         self.window = pygame.display.set_mode((self.DISPLAY_W, self.DISPLAY_H)) # Screen
         pygame.display.set_caption("Runner")
         
@@ -57,12 +57,15 @@ class Game():
         self.proton = objects.Proton(self, (100, 150), (5.0, 0.0))
         self.electron = objects.Electron(self, (100, 250), (5.0, 0.0))
         
+        self.display1 = pygame.Surface((self.DISPLAY_W, self.DISPLAY_H - 260))
+        self.display2 = pygame.Surface((self.DISPLAY_W, 260))
+           
         # Load HUD
-        self.proton_stats = menu.ParticleHUD(self, (10, self.DISPLAY_H - 140-130), (350, 130), self.B, self.proton)
-        self.electron_stats = menu.ParticleHUD(self, (10, self.DISPLAY_H - 140), (350, 130), self.B, self.electron)
+        self.proton_stats = menu.ParticleHUD(self, (10, 140-130), (350, 130), self.B, self.proton)
+        self.electron_stats = menu.ParticleHUD(self, (10, 140), (350, 130), self.B, self.electron)
         
-        self.eF_stats = menu.FieldHUD(self, (10 + 350, self.DISPLAY_H - 140-130), (175, 130), self.eF)
-        self.mgF_stats = menu.FieldHUD(self, (10 + 350, self.DISPLAY_H - 140), (175, 130), self.mgF)
+        self.eF_stats = menu.FieldHUD(self, (10 + 350, 140-130), (175, 130), self.eF)
+        self.mgF_stats = menu.FieldHUD(self, (10 + 350, 140), (175, 130), self.mgF)
         
         self.is_draw = False
     
@@ -76,7 +79,7 @@ class Game():
             if self.actions["start"] or self.actions["back"]:
                 self.playing = False
                 
-            self.display.fill(self.BG_COLOR)
+            self.display1.fill(self.BG_COLOR)
             
             # Draw field
             self.eF.draw()
@@ -86,31 +89,36 @@ class Game():
             self.proton.draw()
             # self.electron.draw()
             
-            # Draw HUD
-            self.proton_stats.show()
-            # self.electron_stats.show()
-            
+            # Draw HUD    
             if not self.is_draw:
+                self.display2.fill(self.BG_COLOR)
+                self.proton_stats.show()
+                # self.electron_stats.show()
                 
                 # self.eF_stats.show()
                 # self.mgF_stats.show()
+                
                 self.is_draw = True
             
-            debug(f"{self.clock.get_fps():.2f}", self.display)
-            
+            if self.proton.vel != 0:
+                self.proton_stats.show_pos()
+             
             # Update stats
             self.proton_stats.update(self.proton)
             # self.electron_stats.update(self.electron)
             
-            self.window.blit(self.display, (0,0))
+            debug(f"{self.clock.get_fps():.2f}", self.display1)
+            
+            self.window.blit(self.display1, (0,0))
+            self.window.blit(self.display2, (0,self.DISPLAY_H-260))
             
             # Movement
             self.proton.move()
             # self.electron.move()
             
             # Electric field collision
-            self.proton.check_eF_collision(self.eF)
-            # self.electron.check_eF_collision(self.eF)
+            self.proton.eF_collision(self.eF)
+            # self.electron.eF_collision(self.eF)
             
             # Magnetic field collision
             # self.proton.check_mgF_collision(self.mgF)

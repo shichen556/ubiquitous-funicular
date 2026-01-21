@@ -7,7 +7,7 @@ class Object():
         self.run_display = True
     
     def blit_scren(self):
-        self.game.window.blit(self.game.display, (0,0))
+        self.game.window.blit(self.game.display1, (0,0))
 
         pygame.display.update()
         self.game.reset_keys()
@@ -33,36 +33,36 @@ class ElectricField(Field):
         self.arrow_length = 10
         self.arrow_size = 6
         self.arrow_spacing = 50
-        pygame.draw.rect(self.game.display, "white", self.square, 1)
+        pygame.draw.rect(self.game.display1, "white", self.square, 1)
         
         if self.type == "left" or self.type == "right":
             for y in range(self.square.top + 20, self.square.bottom, self.spacing):
                 # Horizontal lines
-                pygame.draw.line(self.game.display, self.color, (self.square.left, y), (self.square.right, y), 2)
+                pygame.draw.line(self.game.display1, self.color, (self.square.left, y), (self.square.right, y), 2)
                 
                 # Arrow after a interval
                 if self.type == "left":
                     for x in range(self.square.left + 20, self.square.right, self.arrow_spacing):
-                        pygame.draw.line(self.game.display, self.color, (x,y), (x + self.arrow_length, y - self.arrow_size), 2)
-                        pygame.draw.line(self.game.display, self.color, (x,y), (x + self.arrow_length, y + self.arrow_size), 2)
+                        pygame.draw.line(self.game.display1, self.color, (x,y), (x + self.arrow_length, y - self.arrow_size), 2)
+                        pygame.draw.line(self.game.display1, self.color, (x,y), (x + self.arrow_length, y + self.arrow_size), 2)
                 else:
                     for x in range(self.square.right - 20, self.square.left, -self.arrow_spacing):
-                        pygame.draw.line(self.game.display, self.color, (x,y), (x - self.arrow_length, y - self.arrow_size), 2)
-                        pygame.draw.line(self.game.display, self.color, (x,y), (x - self.arrow_length, y + self.arrow_size), 2)
+                        pygame.draw.line(self.game.display1, self.color, (x,y), (x - self.arrow_length, y - self.arrow_size), 2)
+                        pygame.draw.line(self.game.display1, self.color, (x,y), (x - self.arrow_length, y + self.arrow_size), 2)
         elif self.type == "up" or self.type == "down":
             for x in range(self.square.left + 20, self.square.right, self.spacing):
                 # Vertical lines
-                pygame.draw.line(self.game.display, self.color, (x, self.square.top), (x, self.square.bottom), 2)
+                pygame.draw.line(self.game.display1, self.color, (x, self.square.top), (x, self.square.bottom), 2)
                 
                 # Arrow after a interval
                 if self.type == "up":
                     for y in range(self.square.top + 20, self.square.bottom, self.arrow_spacing):
-                        pygame.draw.line(self.game.display, self.color, (x,y), (x - self.arrow_size, y + self.arrow_length), 2)
+                        pygame.draw.line(self.game.display1, self.color, (x,y), (x - self.arrow_size, y + self.arrow_length), 2)
                         pygame.draw.line(self.game.display, self.color, (x,y), (x + self.arrow_size, y + self.arrow_length), 2)
                 else:
                     for y in range(self.square.bottom - 20, self.square.top, -self.arrow_spacing):
-                        pygame.draw.line(self.game.display, self.color, (x,y), (x - self.arrow_size, y - self.arrow_length), 2)
-                        pygame.draw.line(self.game.display, self.color, (x,y), (x + self.arrow_size, y - self.arrow_length), 2)
+                        pygame.draw.line(self.game.display1, self.color, (x,y), (x - self.arrow_size, y - self.arrow_length), 2)
+                        pygame.draw.line(self.game.display1, self.color, (x,y), (x + self.arrow_size, y - self.arrow_length), 2)
     
 class MagneticField(Field):
     def __init__(self, game, pos, size, type, strength):
@@ -74,19 +74,19 @@ class MagneticField(Field):
     def draw(self):
         self.color_in =  "#9B30FF"
         self.color_out = "#00FFCC"
-        pygame.draw.rect(self.game.display, "white", self.square, 1)
+        pygame.draw.rect(self.game.display1, "white", self.square, 1)
     
         for y in range(self.square.top + 20, self.square.bottom, self.spacing):
             for x in range(self.square.left + 20, self.square.right, self.spacing):
                 # Campo entrante (x)
                 if self.type == "in":
-                    pygame.draw.circle(self.game.display, self.color_in, (x, y), 12, 1)
-                    pygame.draw.line(self.game.display, self.color_in, (x-4, y-4), (x+4, y+4), 2)
-                    pygame.draw.line(self.game.display, self.color_in, (x-4, y+4), (x+4, y-4), 2)
+                    pygame.draw.circle(self.game.display1, self.color_in, (x, y), 12, 1)
+                    pygame.draw.line(self.game.display1, self.color_in, (x-4, y-4), (x+4, y+4), 2)
+                    pygame.draw.line(self.game.display1, self.color_in, (x-4, y+4), (x+4, y-4), 2)
                 # Campo saliente (·)
                 else:
-                    pygame.draw.circle(self.game.display, self.color_out, (x, y), 12, 1)
-                    pygame.draw.circle(self.game.display, self.color_out, (x, y), 4)
+                    pygame.draw.circle(self.game.display1, self.color_out, (x, y), 12, 1)
+                    pygame.draw.circle(self.game.display1, self.color_out, (x, y), 4)
 
 # Particles
 class Particle(Object):
@@ -121,7 +121,7 @@ class Particle(Object):
         if self.rect.left < 0 or self.rect.right > self.game.DISPLAY_W:
             self.vel[0] = -self.vel[0]
             self.angle = pi - self.angle
-        if self.rect.top < 0 or self.rect.bottom > self.game.DISPLAY_H:
+        if self.rect.top < 0 or self.rect.bottom > (self.game.DISPLAY_H):
             self.vel[1] = -self.vel[1]
             self.angle = 2*pi - self.angle
         
@@ -141,6 +141,16 @@ class Particle(Object):
         
         self.vel = [self.vel0x, self.vel0y]
     
+    def eF_collision(self, e_field):
+        if self.rect.colliderect(e_field.square):
+            self.apply_e_force(e_field.type, e_field.E)
+            return True
+            
+    def mgF_collision(self, mg_field):
+        if self.rect.colliderect(mg_field.square):
+            self.apply_mg_force(mg_field.type, mg_field.B)
+            return True
+            
     def update_mod_vel(self):
         from math import sqrt
         self.mod_vel = sqrt(self.vel[0]**2 + self.vel[1]**2)
@@ -151,13 +161,9 @@ class Proton(Particle):
     
     def draw(self):   
         self.color = "#FF4500"
-        pygame.draw.circle(self.game.display, self.color, self.rect.center, 10)
+        pygame.draw.circle(self.game.display1, self.color, self.rect.center, 10)
     
     # Electric Field
-    def check_eF_collision(self, e_field):
-        if self.rect.colliderect(e_field.square):
-            self.apply_e_force(e_field.type, e_field.E)
-    
     def apply_e_force(self, type, E):
         acc = self.CHARGE_VALUE * E / self.MASS
         
@@ -179,10 +185,6 @@ class Proton(Particle):
             self.update_mod_vel()
             
     # Magnetic Field
-    def check_mgF_collision(self, mg_field):
-        if self.rect.colliderect(mg_field.square):
-            self.apply_mg_force(mg_field.type, mg_field.B)
-            
     def apply_mg_force(self, type, B):
         from math import sin, cos, atan2
         
@@ -205,13 +207,9 @@ class Electron(Particle):
 
     def draw(self):   
         self.color = "#1E90FF"
-        pygame.draw.circle(self.game.display, self.color, self.rect.center, 10)
+        pygame.draw.circle(self.game.display1, self.color, self.rect.center, 10)
     
     # Electric Field
-    def check_eF_collision(self, e_field):
-        if self.rect.colliderect(e_field.square):
-            self.apply_e_force(e_field.type, e_field.E)
-    
     def apply_e_force(self, type, E):
         acc = self.CHARGE_VALUE * E / self.MASS
         
@@ -233,10 +231,6 @@ class Electron(Particle):
             self.update_mod_vel()
             
     # Magnetic Field
-    def check_mgF_collision(self, mg_field):
-        if self.rect.colliderect(mg_field.square):
-            self.apply_mg_force(mg_field.type, mg_field.B)
-            
     def apply_mg_force(self, type, B):
         from math import sin, cos, atan2
         
