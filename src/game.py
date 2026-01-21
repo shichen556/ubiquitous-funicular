@@ -49,13 +49,13 @@ class Game():
         
         # Load In-game
         self.E = 2
-        self.B = 0.05
+        self.B = 0.1
         
         self.eF = objects.ElectricField(self, (200, 100), (100, 220), "right", self.E)
         self.mgF = objects.MagneticField(self, (400, 100), (50, 220), "out", self.B)
         
-        self.proton = objects.Proton(self, (100, 150), (5.0, 0.0))
-        self.electron = objects.Electron(self, (100, 250), (5.0, 0.0))
+        self.proton = objects.Particle(self, (100, 150), (5.0, 0.0), "+")
+        self.electron = objects.Particle(self, (100, 250), (5.0, 0.0), "-")
         
         self.display1 = pygame.Surface((self.DISPLAY_W, self.DISPLAY_H - 260))
         self.display2 = pygame.Surface((self.DISPLAY_W, 260))
@@ -101,11 +101,18 @@ class Game():
                 self.is_draw = True
             
             if self.proton.vel != 0:
-                self.proton_stats.show_pos()
-             
-            # Update stats
-            self.proton_stats.update(self.proton)
-            # self.electron_stats.update(self.electron)
+                self.proton_stats.update_pos(self.proton)
+            
+            # if self.proton.eF_collision(self.eF) or self.proton.edge_collision():
+            #     self.update_eF_collision(self.proton_stats, self.proton)
+            if self.proton.mgF_collision(self.mgF) or self.proton.edge_collision():
+                pass
+                # self.update_mg_collision(self.proton_stats, self.proton)
+            
+            # if self.electron.eF_collision(self.eF):
+            #     self.update_eF_collision(self.electron_stats, self.electron)
+            # if self.electron.mgF_collision(self.mgF):
+            #     self.mg_collision(self.electron_stats, self.electron)
             
             debug(f"{self.clock.get_fps():.2f}", self.display1)
             
@@ -115,14 +122,6 @@ class Game():
             # Movement
             self.proton.move()
             # self.electron.move()
-            
-            # Electric field collision
-            self.proton.eF_collision(self.eF)
-            # self.electron.eF_collision(self.eF)
-            
-            # Magnetic field collision
-            # self.proton.check_mgF_collision(self.mgF)
-            # self.electron.check_mgF_collision(self.mgF)
             
             pygame.display.update()
             self.reset_keys()
@@ -161,3 +160,13 @@ class Game():
         
         self.display.blit(text_surf, text_rect)
     
+    def update_eF_collision(self, particle_hud, particle):
+        # Update stats
+        particle_hud.update1(particle)
+        particle_hud.update2(particle)
+        particle_hud.update_vel_comp(particle)
+    
+    def update_mg_collision(self, particle_hud, particle):
+        # Update stats
+        particle_hud.update2(particle)
+        particle_hud.update_vel_comp(particle)
