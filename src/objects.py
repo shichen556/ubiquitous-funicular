@@ -162,20 +162,16 @@ class Proton(Particle):
         
         before_vel = self.vel 
         if type == "up":
-            if self.charge_sign == "+":
-                self.vel[1] -= acc
+            self.vel[1] -= acc
                 
         if type == "down":
-            if self.charge_sign == "+":
-                self.vel[1] += acc
+            self.vel[1] += acc
                 
         if type == "left":
-            if self.charge_sign == "+":
-                self.vel[0] -= acc
+            self.vel[0] -= acc
                 
         if type == "right":
-            if self.charge_sign == "+":
-                self.vel[0] += acc
+            self.vel[0] += acc
         
         after_vel = self.vel
         if after_vel[0] != before_vel[0] or after_vel[1] != before_vel[1]:
@@ -194,12 +190,10 @@ class Proton(Particle):
         self.angle = atan2(self.vel[1], self.vel[0])
         
         if type == "out":
-            if self.charge_sign == "+":
-                self.angle += self.ang_vel
+            self.angle += self.ang_vel
         
         if type == "in":
-            if self.charge_sign == "+":
-                self.angle -= self.ang_vel
+            self.angle -= self.ang_vel
         
         self.vel[0] = self.mod_vel * cos(self.angle)
         self.vel[1] = self.mod_vel * sin(self.angle)
@@ -222,20 +216,16 @@ class Electron(Particle):
         
         before_vel = self.vel 
         if type == "up":
-            if self.charge_sign == "-":
-                self.vel[1] += acc
+            self.vel[1] += acc
                 
         if type == "down":
-            if self.charge_sign == "-":
-                self.vel[1] -= acc
+            self.vel[1] -= acc
                 
         if type == "left":
-            if self.charge_sign == "-":
-                self.vel[0] += acc
+            self.vel[0] += acc
                 
         if type == "right":
-            if self.charge_sign == "-":
-                self.vel[0] -= acc
+            self.vel[0] -= acc
         
         after_vel = self.vel
         if after_vel[0] != before_vel[0] or after_vel[1] != before_vel[1]:
@@ -254,12 +244,10 @@ class Electron(Particle):
         self.angle = atan2(self.vel[1], self.vel[0])
         
         if type == "out":
-            if self.charge_sign == "-":
-                self.angle -= self.ang_vel
+            self.angle -= self.ang_vel
         
         if type == "in":
-            if self.charge_sign == "-":
-                self.angle += self.ang_vel
+            self.angle += self.ang_vel
         
         self.vel[0] = self.mod_vel * cos(self.angle)
         self.vel[1] = self.mod_vel * sin(self.angle)
