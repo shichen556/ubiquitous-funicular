@@ -1,8 +1,10 @@
 import pygame
-import menu as menu
-import objects as objects
+import menu
+import objects
+import title
 
 from debug.debug import debug
+import time
 
 class Game():
     def __init__(self):
@@ -12,8 +14,11 @@ class Game():
         # Framerate control
         self.running = True
         self.playing = False
+        
         self.clock = pygame.time.Clock()
         self.FPS = 60
+        self.dt = 0
+        self.prev_time = 0
         
         # Pygame screen setup
         self.GAME_W, self.GAME_H = 450, 350
@@ -37,9 +42,9 @@ class Game():
         self.TXT_COLOR = "#B0C4FF"
         
         # Load Menu options
-        self.main_menu = menu.MainMenu(self)
-        self.options = menu.OptionsMenu(self)
-        self.credits = menu.CreditsMenu(self)
+        self.main_menu = title.MainMenu(self)
+        self.options = title.OptionsMenu(self)
+        self.credits = title.CreditsMenu(self)
         self.curr_menu = self.main_menu
         
         # Load In-game
@@ -132,7 +137,7 @@ class Game():
                     self.actions["start"] = True
                 if event.key in [pygame.K_BACKSPACE, pygame.K_ESCAPE]:
                     self.actions["back"] = True
-        
+            
     def reset_keys(self):
         for key in self.actions:
             self.actions[key] = False
