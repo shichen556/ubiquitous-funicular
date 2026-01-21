@@ -1,4 +1,5 @@
 import pygame
+
 from debug.debug import debug
 
 class State:
@@ -42,14 +43,6 @@ class Menu:
         
         pygame.display.update()
         self.game.reset_keys()
-    
-    def draw_text(self, text, size, x, y, color):
-        font = pygame.font.SysFont(self.game.font_name, size)
-        
-        text_surf = font.render(text, True, color)
-        text_rect = text_surf.get_rect(topleft = (x,y))
-        
-        self.game.display.blit(text_surf, text_rect)
 
 class MainMenu(Menu):
     def __init__(self, game):

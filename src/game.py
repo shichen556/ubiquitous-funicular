@@ -58,11 +58,11 @@ class Game():
         self.electron = objects.Electron(self, (100, 250), (5.0, 0.0))
         
         # Load HUD
-        self.proton_stats = menu.HUD(self, (10, self.DISPLAY_H - 140-130), (350, 130), B=self.B, particle=self.proton)
-        self.electron_stats = menu.HUD(self, (10, self.DISPLAY_H - 140), (350, 130), B=self.B, particle=self.electron)
+        self.proton_stats = menu.ParticleHUD(self, (10, self.DISPLAY_H - 140-130), (350, 130), self.B, self.proton)
+        self.electron_stats = menu.ParticleHUD(self, (10, self.DISPLAY_H - 140), (350, 130), self.B, self.electron)
         
-        self.eF_stats = menu.HUD(self, (10 + 350, self.DISPLAY_H - 140-130), (175, 130), field=self.eF)
-        self.mgF_stats = menu.HUD(self, (10 + 350, self.DISPLAY_H - 140), (175, 130), field=self.mgF)
+        self.eF_stats = menu.FieldHUD(self, (10 + 350, self.DISPLAY_H - 140-130), (175, 130), self.eF)
+        self.mgF_stats = menu.FieldHUD(self, (10 + 350, self.DISPLAY_H - 140), (175, 130), self.mgF)
         
         self.is_draw = False
     
@@ -87,9 +87,10 @@ class Game():
             # self.electron.draw()
             
             # Draw HUD
+            self.proton_stats.show()
+            # self.electron_stats.show()
+            
             if not self.is_draw:
-                # self.proton_stats.show()
-                # self.electron_stats.show()
                 
                 # self.eF_stats.show()
                 # self.mgF_stats.show()
@@ -98,18 +99,20 @@ class Game():
             debug(f"{self.clock.get_fps():.2f}", self.display)
             
             # Update stats
-            # self.proton_stats.update(self.proton)
+            self.proton_stats.update(self.proton)
             # self.electron_stats.update(self.electron)
             
             self.window.blit(self.display, (0,0))
             
             # Movement
             self.proton.move()
-            self.electron.move()
+            # self.electron.move()
             
+            # Electric field collision
             self.proton.check_eF_collision(self.eF)
-            self.electron.check_eF_collision(self.eF)
+            # self.electron.check_eF_collision(self.eF)
             
+            # Magnetic field collision
             # self.proton.check_mgF_collision(self.mgF)
             # self.electron.check_mgF_collision(self.mgF)
             
