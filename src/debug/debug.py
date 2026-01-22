@@ -2,7 +2,7 @@ import pygame
 pygame.init()
     
 def debug(info, display_surf, y = 20, x = 20):
-    font = pygame.font.Font(None, 30)
+    font = pygame.font.Font(None, 20)
     
     debug_surf = font.render(str(info), True, "white")
     debug_rect = debug_surf.get_rect(topleft = (x,y))

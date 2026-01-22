@@ -16,7 +16,7 @@ class Game():
         self.playing = False
         
         self.clock = pygame.time.Clock()
-        self.FPS = 60
+        self.FPS = 30
         self.dt = 0
         self.prev_time = 0
         
@@ -49,12 +49,12 @@ class Game():
         
         # Load In-game
         self.E = 2
-        self.B = 0.1
+        self.B = 0.2
         
         self.eF = objects.ElectricField(self, (200, 100), (100, 220), "right", self.E)
-        self.mgF = objects.MagneticField(self, (400, 100), (50, 220), "out", self.B)
+        self.mgF = objects.MagneticField(self, (100, 100), (400, 400), "in", self.B)
         
-        self.proton = objects.Particle(self, (100, 150), (5.0, 0.0), "+")
+        self.proton = objects.Particle(self, (250, 300), (3.0, 0.0), "+")
         self.electron = objects.Particle(self, (100, 250), (5.0, 0.0), "-")
         
         self.display1 = pygame.Surface((self.DISPLAY_W, self.DISPLAY_H - 260))
@@ -68,7 +68,8 @@ class Game():
         self.mgF_stats = menu.FieldHUD(self, (10 + 350, 140), (175, 130), self.mgF)
         
         self.is_draw = False
-    
+        self.is_pause = True
+        
     # Game loop
     def game_loop(self):
         self.electron.reset_pos()
@@ -82,7 +83,7 @@ class Game():
             self.display1.fill(self.BG_COLOR)
             
             # Draw field
-            self.eF.draw()
+            # self.eF.draw()
             self.mgF.draw()
             
             # Draw particle
@@ -100,30 +101,36 @@ class Game():
                 
                 self.is_draw = True
             
-            if self.proton.vel != 0:
-                self.proton_stats.update_pos(self.proton)
-            
-            if self.proton.eF_collision(self.eF) or self.proton.edge_collision():
-                self.update_eF_collision(self.proton_stats, self.proton)
-            if self.proton.mgF_collision(self.mgF) or self.proton.edge_collision():
-                self.proton.apply_mg_force(self.mgF.type, self.mgF.B)
-                self.update_mg_collision(self.proton_stats, self.proton)
-            
-            # if self.electron.eF_collision(self.eF):
-            #     self.update_eF_collision(self.electron_stats, self.electron)
-            # if self.electron.mgF_collision(self.mgF):
-            #     self.mg_collision(self.electron_stats, self.electron)
+            if self.is_pause:
+                if self.proton.vel != 0:
+                    self.proton_stats.update_pos(self.proton)
+                
+                # if self.proton.eF_collision(self.eF) or self.proton.edge_collision():
+                #     self.update_eF_collision(self.proton_stats, self.proton)
+                if self.proton.mgF_collision(self.mgF) or self.proton.edge_collision():
+                    self.update_mg_collision(self.proton_stats, self.proton)
+                
+                # if self.electron.eF_collision(self.eF):
+                #     self.update_eF_collision(self.electron_stats, self.electron)
+                # if self.electron.mgF_collision(self.mgF):
+                #     self.mg_collision(self.electron_stats, self.electron)
+                
+                # Movement
+                self.proton.move()
+                # self.electron.move()
+                
+            self.proton.draw_circular_trajectory(self.mgF.type)
             
             debug(f"{self.clock.get_fps():.2f}", self.display1)
-            debug((self.proton.rect.top, self.proton.rect.bottom), self.display1, 60)
+            debug(f"{self.proton.vel[0]:.2f}, {self.proton.vel[1]:.2f}", self.display1, 40)
+            debug(f"w: {self.proton.ang_vel:.2f}", self.display1, 60)
+            debug(f"alpha: {self.proton.angle:.2f}", self.display1, 80)
+            debug(f"r: {self.proton.mod_vel:.2f}", self.display1, 100)
+            debug(f"Pause: {self.is_pause}", self.display1, 120)
             
             pygame.draw.line(self.display2, "black", (0, 0), (self.DISPLAY_W, 0), 10)
             self.window.blit(self.display1, (0,0))
             self.window.blit(self.display2, (0,self.DISPLAY_H-260))
-            
-            # Movement
-            self.proton.move()
-            # self.electron.move()
             
             pygame.display.update()
             self.reset_keys()
@@ -149,6 +156,11 @@ class Game():
                     self.actions["start"] = True
                 if event.key in [pygame.K_BACKSPACE, pygame.K_ESCAPE]:
                     self.actions["back"] = True
+                if event.key == pygame.K_t:
+                    if self.is_pause:
+                        self.is_pause = False
+                    else:
+                        self.is_pause = True
             
     def reset_keys(self):
         for key in self.actions:

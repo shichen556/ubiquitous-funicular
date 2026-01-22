@@ -88,6 +88,14 @@ class MagneticField(Field):
                     pygame.draw.circle(self.game.display1, self.color_out, (x, y), 12, 1)
                     pygame.draw.circle(self.game.display1, self.color_out, (x, y), 4)
 
+
+
+
+
+
+
+
+
 # Particles
 class Particle(Object):
     def __init__(self, game, pos, vel, charge_sign):
@@ -110,7 +118,7 @@ class Particle(Object):
         self.angle = 0.0
         self.ang_vel = 0.05
         
-        self.radio = 500
+        self.radius = 500
     
     def move(self):
         # Movement
@@ -131,6 +139,16 @@ class Particle(Object):
             self.angle -= 2*pi
         if self.angle < -2*pi:
             self.angle += 2*pi
+        
+    def draw_circular_trajectory(self, type):
+        from math import sin, cos
+        if type == "out":
+            x0 = self.rect.x - self.radius * sin(self.angle)
+            y0 = self.rect.y + self.radius * cos(self.angle)
+        else:
+            x0 = self.rect.x + self.radius * sin(self.angle)
+            y0 = self.rect.y - self.radius * cos(self.angle)
+        pygame.draw.circle(self.game.display1, "white", (x0, y0), self.radius, 1)
     
     def edge_collision(self):
         # Edge collision
@@ -146,7 +164,7 @@ class Particle(Object):
         self.rect.x = self.pos0x
         self.rect.y = self.pos0y
         self.angle = 0.0
-        self.radio = 0.0
+        self.radius = 0.0
         
         self.mod_vel = self.vel0
         self.vel = [self.vel0x, self.vel0y]
@@ -199,6 +217,7 @@ class Particle(Object):
             
     def mgF_collision(self, mg_field):
         if self.rect.colliderect(mg_field.square):
+            self.apply_mg_force(mg_field.type, mg_field.B)
             return True
         return False
             
@@ -207,10 +226,10 @@ class Particle(Object):
         from math import sin, cos, atan2
         
         if B != 0:
-            self.radio = self.MASS * self.mod_vel / (self.CHARGE_VALUE * B)
-        if self.radio != 0:
-            self.vel_ang = self.mod_vel / self.radio
-        self.angle = atan2(self.vel[1], self.vel[0])
+            self.radius = self.MASS * self.mod_vel / (self.CHARGE_VALUE * B)
+        if self.radius != 0:
+            self.ang_vel = self.CHARGE_VALUE * B / self.MASS
+        # self.angle = atan2(self.vel[1], self.vel[0])
     
         if type == "out":
             if self.charge_sign == "+":
@@ -224,7 +243,6 @@ class Particle(Object):
             elif self.charge_sign == "-":
                 self.angle += self.ang_vel
                 
-
         self.vel[0] = self.mod_vel * cos(self.angle)
         self.vel[1] = self.mod_vel * sin(self.angle)
         

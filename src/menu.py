@@ -68,8 +68,8 @@ class ParticleHUD(HUD):
         
         from math import degrees
         self.angle = round(degrees(self.particle.angle), self.decimal_pres) # Changes in contact with a Magnetic field
-        self.radio = round(self.mass * self.mod_vel / (self.charge_value * self.B), self.decimal_pres) # Changes in contact with a Magnetic field, vel and B
-        self.ang_vel = round((self.mod_vel / self.radio), self.decimal_pres) # Changes in contact with a Magnetic field, vel and B
+        self.radius = round(self.mass * self.mod_vel / (self.charge_value * self.B), self.decimal_pres) # Changes in contact with a Magnetic field, vel and B
+        self.ang_vel = round((self.mod_vel / self.radius), self.decimal_pres) # Changes in contact with a Magnetic field, vel and B
         
         # Variables values
         self.pos = [self.particle.rect.x, self.particle.rect.y]
@@ -106,7 +106,7 @@ class ParticleHUD(HUD):
     def show_ang(self):
         self.draw_rect((self.x2, self.y+self.offsety*2), (130, 60))
         self.draw_text(f"Angle: {self.angle}°", self.size, self.x2, self.y + self.offsety*2, self.color)
-        self.draw_text(f"Radio: {self.radio} m", self.size, self.x2, self.y + self.offsety*3, self.color)
+        self.draw_text(f"Radius: {self.radius} m", self.size, self.x2, self.y + self.offsety*3, self.color)
         self.draw_text(f"Angular velocity: {self.ang_vel} rad/s", self.size, self.x2, self.y + self.offsety*4, self.color)
         
     def show(self):
@@ -136,8 +136,9 @@ class ParticleHUD(HUD):
         from math import degrees
         self.angle = round(degrees(self.particle.angle), self.decimal_pres)
         
-        self.radio = round(self.particle.radio, self.decimal_pres)
+        self.radius = round(self.particle.radius, self.decimal_pres)
         self.ang_vel = round(self.particle.ang_vel, self.decimal_pres)
+        
         self.show_ang()
         
 class FieldHUD(HUD):
