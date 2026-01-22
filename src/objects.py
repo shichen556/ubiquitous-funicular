@@ -106,10 +106,11 @@ class Particle(Object):
         self.vel = [vel[0], vel[1]]
         from math import sqrt
         self.mod_vel = sqrt(vel[0]**2+vel[1]**2)
+        self.vel0 = self.mod_vel
         self.angle = 0.0
-        self.ang_vel = 0.0
+        self.ang_vel = 0.05
         
-        self.radio = 0.0
+        self.radio = 500
     
     def move(self):
         # Movement
@@ -121,7 +122,7 @@ class Particle(Object):
             if self.rect.left < 0 or self.rect.right > self.game.DISPLAY_W:
                 self.vel[0] = -self.vel[0]
                 self.angle = pi - self.angle
-            if self.rect.top < 0 or self.rect.bottom > (self.game.DISPLAY_H):
+            if self.rect.top < 0 or self.rect.bottom > (self.game.DISPLAY_H-280):
                 self.vel[1] = -self.vel[1]
                 self.angle = 2*pi - self.angle
         
@@ -133,9 +134,10 @@ class Particle(Object):
     
     def edge_collision(self):
         # Edge collision
+        from math import pi
         if self.rect.left < 0 or self.rect.right > self.game.DISPLAY_W:
             return True
-        if self.rect.top < 0 or self.rect.bottom > (self.game.DISPLAY_H):
+        if self.rect.top < 0 or self.rect.bottom > (self.game.DISPLAY_H-280):
             return True
         return False
             
@@ -145,10 +147,10 @@ class Particle(Object):
         self.rect.y = self.pos0y
         self.angle = 0.0
         self.radio = 0.0
-        self.ang_vel = 0.0
         
+        self.mod_vel = self.vel0
         self.vel = [self.vel0x, self.vel0y]
-      
+
     def update_mod_vel(self):
         from math import sqrt
         self.mod_vel = sqrt(self.vel[0]**2 + self.vel[1]**2)
@@ -166,17 +168,11 @@ class Particle(Object):
             return True
         return False
             
-    def mgF_collision(self, mg_field):
-        if self.rect.colliderect(mg_field.square):
-            self.apply_mg_force(mg_field.type, mg_field.B)
-            return True
-        return False
-        
     # Electric Field
     def apply_e_force(self, type, E):
         acc = self.CHARGE_VALUE * E / self.MASS
         
-        before_vel = self.vel 
+        # before_vel = self.vel
         if type == "up":
             if self.charge_sign == "+":
                 self.vel[1] -= acc
@@ -198,9 +194,13 @@ class Particle(Object):
             else:
                 self.vel[0] -= acc
                 
-        after_vel = self.vel
-        if after_vel[0] != before_vel[0] or after_vel[1] != before_vel[1]:
-            self.update_mod_vel()
+        # after_vel = self.vel
+        self.update_mod_vel()
+            
+    def mgF_collision(self, mg_field):
+        if self.rect.colliderect(mg_field.square):
+            return True
+        return False
             
     # Magnetic Field
     def apply_mg_force(self, type, B):
@@ -211,12 +211,10 @@ class Particle(Object):
         if self.radio != 0:
             self.vel_ang = self.mod_vel / self.radio
         self.angle = atan2(self.vel[1], self.vel[0])
-        print(f"vel_ang: {self.vel_ang}")
     
         if type == "out":
             if self.charge_sign == "+":
                 self.angle += self.ang_vel
-                print(f"angl: {self.angle}")
             elif self.charge_sign == "-":
                 self.angle -= self.ang_vel
                 

@@ -103,11 +103,11 @@ class Game():
             if self.proton.vel != 0:
                 self.proton_stats.update_pos(self.proton)
             
-            # if self.proton.eF_collision(self.eF) or self.proton.edge_collision():
-            #     self.update_eF_collision(self.proton_stats, self.proton)
+            if self.proton.eF_collision(self.eF) or self.proton.edge_collision():
+                self.update_eF_collision(self.proton_stats, self.proton)
             if self.proton.mgF_collision(self.mgF) or self.proton.edge_collision():
-                pass
-                # self.update_mg_collision(self.proton_stats, self.proton)
+                self.proton.apply_mg_force(self.mgF.type, self.mgF.B)
+                self.update_mg_collision(self.proton_stats, self.proton)
             
             # if self.electron.eF_collision(self.eF):
             #     self.update_eF_collision(self.electron_stats, self.electron)
@@ -115,7 +115,9 @@ class Game():
             #     self.mg_collision(self.electron_stats, self.electron)
             
             debug(f"{self.clock.get_fps():.2f}", self.display1)
+            debug((self.proton.rect.top, self.proton.rect.bottom), self.display1, 60)
             
+            pygame.draw.line(self.display2, "black", (0, 0), (self.DISPLAY_W, 0), 10)
             self.window.blit(self.display1, (0,0))
             self.window.blit(self.display2, (0,self.DISPLAY_H-260))
             

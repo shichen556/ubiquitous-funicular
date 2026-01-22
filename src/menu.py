@@ -96,7 +96,7 @@ class ParticleHUD(HUD):
         self.draw_text(f"Position (x, y): ({self.pos[0]}, {self.pos[1]}) m", self.size, self.x2, self.y + self.offsety*0, self.color)
     
     def show_vel_comp(self):
-        self.draw_rect((self.x2, self.y + self.offsety), (150, 15))
+        self.draw_rect((self.x2, self.y + self.offsety), (155, 15))
         self.draw_text(f"Velocity (vx, vy): ({self.velx}, {self.vely}) m/s", self.size, self.x2, self.y + self.offsety*1, self.color)
     
     def show_vel(self):
