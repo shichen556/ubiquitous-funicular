@@ -18,7 +18,8 @@ class Game():
         self.clock = pygame.time.Clock()
         self.FPS = 30
         self.dt = 0
-        self.prev_time = 0
+        self.t0 = time.time()
+        self.t1 = 0
         
         # Pygame screen setup
         self.GAME_W, self.GAME_H = 450, 350
@@ -49,12 +50,12 @@ class Game():
         
         # Load In-game
         self.E = 2
-        self.B = 0.2
+        self.B = 15
         
         self.eF = objects.ElectricField(self, (200, 100), (100, 220), "right", self.E)
-        self.mgF = objects.MagneticField(self, (100, 100), (400, 400), "in", self.B)
+        self.mgF = objects.MagneticField(self, (100, 100), (400, 400), "out", self.B)
         
-        self.proton = objects.Particle(self, (250, 300), (3.0, 0.0), "+")
+        self.proton = objects.Particle(self, (250, 350), (100.0, 0.0), "+")
         self.electron = objects.Particle(self, (100, 250), (5.0, 0.0), "-")
         
         self.display1 = pygame.Surface((self.DISPLAY_W, self.DISPLAY_H - 260))
@@ -79,7 +80,7 @@ class Game():
             self.check_events()
             if self.actions["start"] or self.actions["back"]:
                 self.playing = False
-                
+            
             self.display1.fill(self.BG_COLOR)
             
             # Draw field
@@ -100,6 +101,10 @@ class Game():
                 # self.mgF_stats.show()
                 
                 self.is_draw = True
+                
+            self.t1 = time.time()
+            self.dt = self.t1 - self.t0
+            self.t0 = time.time()
             
             if self.is_pause:
                 if self.proton.vel != 0:
@@ -107,7 +112,7 @@ class Game():
                 
                 # if self.proton.eF_collision(self.eF) or self.proton.edge_collision():
                 #     self.update_eF_collision(self.proton_stats, self.proton)
-                if self.proton.mgF_collision(self.mgF) or self.proton.edge_collision():
+                if self.proton.mgF_collision(self.mgF, self.dt) or self.proton.edge_collision():
                     self.update_mg_collision(self.proton_stats, self.proton)
                 
                 # if self.electron.eF_collision(self.eF):
@@ -116,7 +121,7 @@ class Game():
                 #     self.mg_collision(self.electron_stats, self.electron)
                 
                 # Movement
-                self.proton.move()
+                self.proton.move(self.dt)
                 # self.electron.move()
                 
             self.proton.draw_circular_trajectory(self.mgF.type)

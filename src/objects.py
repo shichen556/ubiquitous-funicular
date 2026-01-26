@@ -1,4 +1,5 @@
 import pygame
+import vector
 
 class Object():
     def __init__(self, game):
@@ -107,6 +108,8 @@ class Particle(Object):
         
         self.pos0x = pos[0]
         self.pos0y = pos[1]
+        self.pos = [self.pos0x, self.pos0y]
+        
         self.rect = pygame.Rect(self.pos0x, self.pos0y, 10, 10)
         
         self.vel0x = vel[0]
@@ -116,14 +119,17 @@ class Particle(Object):
         self.mod_vel = sqrt(vel[0]**2+vel[1]**2)
         self.vel0 = self.mod_vel
         self.angle = 0.0
-        self.ang_vel = 0.05
+        self.ang_vel = 2.5
         
         self.radius = 500
     
-    def move(self):
+    def move(self, dt):
         # Movement
-        self.rect.x += self.vel[0]
-        self.rect.y += self.vel[1]
+        self.pos[0] += self.vel[0] * dt
+        self.pos[1] += self.vel[1] * dt
+        
+        self.rect.centerx = self.pos[0]
+        self.rect.centery = self.pos[1]
         
         from math import pi
         if self.edge_collision():
@@ -140,15 +146,13 @@ class Particle(Object):
         if self.angle < -2*pi:
             self.angle += 2*pi
         
-    def draw_circular_trajectory(self, type):
-        from math import sin, cos
-        if type == "out":
-            x0 = self.rect.x - self.radius * sin(self.angle)
-            y0 = self.rect.y + self.radius * cos(self.angle)
-        else:
-            x0 = self.rect.x + self.radius * sin(self.angle)
-            y0 = self.rect.y - self.radius * cos(self.angle)
-        pygame.draw.circle(self.game.display1, "white", (x0, y0), self.radius, 1)
+    def draw_circular_trajectory(self, type, dir="+"):
+        # Vector direction
+        n_hat = vector.norm_perpen(self.vel, dir)
+        cx = self.rect.centerx - self.radius * n_hat[0]
+        cy = self.rect.centery - self.radius * n_hat[1]
+    
+        pygame.draw.circle(self.game.display1, "white", (cx, cy), self.radius, 1)
     
     def edge_collision(self):
         # Edge collision
@@ -215,34 +219,34 @@ class Particle(Object):
         # after_vel = self.vel
         self.update_mod_vel()
             
-    def mgF_collision(self, mg_field):
+    def mgF_collision(self, mg_field, dt):
         if self.rect.colliderect(mg_field.square):
-            self.apply_mg_force(mg_field.type, mg_field.B)
+            self.apply_mg_force(mg_field.type, mg_field.B, dt)
             return True
         return False
             
     # Magnetic Field
-    def apply_mg_force(self, type, B):
+    def apply_mg_force(self, type, B, dt):
         from math import sin, cos, atan2
         
         if B != 0:
             self.radius = self.MASS * self.mod_vel / (self.CHARGE_VALUE * B)
         if self.radius != 0:
             self.ang_vel = self.CHARGE_VALUE * B / self.MASS
-        # self.angle = atan2(self.vel[1], self.vel[0])
+        self.angle = atan2(self.vel[1], self.vel[0])
     
         if type == "out":
             if self.charge_sign == "+":
-                self.angle += self.ang_vel
+                self.angle -= self.ang_vel * dt
             elif self.charge_sign == "-":
-                self.angle -= self.ang_vel
+                self.angle += self.ang_vel * dt
                 
         if type == "in":
             if self.charge_sign == "+":
-                self.angle -= self.ang_vel
-            elif self.charge_sign == "-":
                 self.angle += self.ang_vel
-                
+            elif self.charge_sign == "-":
+                self.angle -= self.ang_vel
+        
         self.vel[0] = self.mod_vel * cos(self.angle)
         self.vel[1] = self.mod_vel * sin(self.angle)
         

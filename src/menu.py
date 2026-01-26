@@ -12,6 +12,7 @@ class Menu:
         text_surf = font.render(text, True, color)
         text_rect = text_surf.get_rect(topleft = (x,y))
         
+        pygame.draw.rect(self.game.display2, "#787878", text_rect)
         self.game.display2.blit(text_surf, text_rect)
 
 class HUD(Menu):
@@ -32,14 +33,14 @@ class HUD(Menu):
         self.offsety = 20
         
         # Second column
-        self.x2 = self.x1 + (self.rect_ext.width*0.5)
+        self.x2 = self.x1 + (self.rect_ext.width*0.45)
         
     def draw_HUD_rect(self):
         pygame.draw.rect(self.game.display2, "#3C3C3C", self.rect_ext)
         pygame.draw.rect(self.game.display2, "#787878", self.rect_in)
     
-    def draw_rect(self, pos, size):
-        self.rect = pygame.Rect(pos[0], pos[1], size[0], size[1])
+    def draw_rect(self, pos):
+        self.rect = pygame.Rect(pos[0], pos[1], 170, 15)
         pygame.draw.rect(self.game.display2, "#787878", self.rect)
         
 class ParticleHUD(HUD):
@@ -92,19 +93,19 @@ class ParticleHUD(HUD):
         self.show_ang()
 
     def show_pos(self):
-        self.draw_rect((self.x2, self.y), (130, 15))
+        self.draw_rect((self.x2, self.y))
         self.draw_text(f"Position (x, y): ({self.pos[0]}, {self.pos[1]}) m", self.size, self.x2, self.y + self.offsety*0, self.color)
     
     def show_vel_comp(self):
-        self.draw_rect((self.x2, self.y + self.offsety), (155, 15))
+        self.draw_rect((self.x2, self.y + self.offsety))
         self.draw_text(f"Velocity (vx, vy): ({self.velx}, {self.vely}) m/s", self.size, self.x2, self.y + self.offsety*1, self.color)
     
     def show_vel(self):
-        self.draw_rect((self.x1, self.y + 4*self.offsety), (130, 15))
+        self.draw_rect((self.x1, self.y + 4*self.offsety))
         self.draw_text(f"Velocity: {self.mod_vel:.3} m/s", self.size, self.x1, self.y + self.offsety*4, self.color)
         
     def show_ang(self):
-        self.draw_rect((self.x2, self.y+self.offsety*2), (130, 60))
+        self.draw_rect((self.x2, self.y+self.offsety*2))
         self.draw_text(f"Angle: {self.angle}°", self.size, self.x2, self.y + self.offsety*2, self.color)
         self.draw_text(f"Radius: {self.radius} m", self.size, self.x2, self.y + self.offsety*3, self.color)
         self.draw_text(f"Angular velocity: {self.ang_vel} rad/s", self.size, self.x2, self.y + self.offsety*4, self.color)
