@@ -75,16 +75,17 @@ class MagneticField(Field):
     def __init__(self, game, pos, size, type, strength):
         super().__init__(game, pos, size, type, strength)
         
-        self.spacing = 60 * self.scale
+        self.spacing = 45 * self.scale
         self.B = strength
+        self.offset = 25
         
     def draw(self):
         self.color_in =  "#9B30FF"
         self.color_out = "#00FFCC"
         pygame.draw.rect(self.game.display1, self.edge_color4, self.square, 1)
     
-        for y in range(self.square.top + 20 * self.scale, self.square.bottom, self.spacing):
-            for x in range(self.square.left + 20 * self.scale, self.square.right, self.spacing):
+        for y in range(self.square.top + self.offset * self.scale, self.square.bottom, self.spacing):
+            for x in range(self.square.left + self.offset * self.scale, self.square.right, self.spacing):
                 # Campo entrante (x)
                 if self.type == "in":
                     pygame.draw.circle(self.game.display1, self.color_in, (x, y), 12 * self.scale, 1)

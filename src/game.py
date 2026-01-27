@@ -27,7 +27,7 @@ class Game():
         user32 = ctypes.windll.user32
         user32.SetProcessDPIAware()
 
-        self.scalex, self.scaley = 1, 1
+        self.scalex, self.scaley = 0.8, 0.8
         self.WIDTH, self.HEIGHT = user32.GetSystemMetrics(0) * self.scalex, user32.GetSystemMetrics(1) * self.scaley
 
         self.GAME_W, self.GAME_H = 450, 350
