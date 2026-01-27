@@ -75,26 +75,30 @@ class MagneticField(Field):
     def __init__(self, game, pos, size, type, strength):
         super().__init__(game, pos, size, type, strength)
         
-        self.spacing = 45 * self.scale
         self.B = strength
-        self.offset = 25
+        
+        self.circle_r = 12 * self.scale
+        self.offset = int((self.square.width - 4*self.circle_r) / 3) + self.circle_r
+        self.spacing = (self.offset + self.circle_r)
+        
+        self.in_r = 4 * self.scale
         
     def draw(self):
         self.color_in =  "#9B30FF"
         self.color_out = "#00FFCC"
         pygame.draw.rect(self.game.display1, self.edge_color4, self.square, 1)
     
-        for y in range(self.square.top + self.offset * self.scale, self.square.bottom, self.spacing):
-            for x in range(self.square.left + self.offset * self.scale, self.square.right, self.spacing):
+        for y in range(self.square.top + self.offset, self.square.bottom, self.spacing):
+            for x in range(self.square.left + self.offset, self.square.right, self.spacing):
                 # Campo entrante (x)
                 if self.type == "in":
-                    pygame.draw.circle(self.game.display1, self.color_in, (x, y), 12 * self.scale, 1)
+                    pygame.draw.circle(self.game.display1, self.color_in, (x, y), self.circle_r, 1)
                     pygame.draw.line(self.game.display1, self.color_in, (x-4 * self.scale, y-4 * self.scale), (x+4 * self.scale, y+4 * self.scale), 2)
                     pygame.draw.line(self.game.display1, self.color_in, (x-4 * self.scale, y+4 * self.scale), (x+4 * self.scale, y-4 * self.scale), 2)
                 # Campo saliente (·)
                 else:
-                    pygame.draw.circle(self.game.display1, self.color_out, (x, y), 12 * self.scale, 1)
-                    pygame.draw.circle(self.game.display1, self.color_out, (x, y), 4 * self.scale)
+                    pygame.draw.circle(self.game.display1, self.color_out, (x, y), self.circle_r, 1)
+                    pygame.draw.circle(self.game.display1, self.color_out, (x, y), self.in_r)
 
 
 

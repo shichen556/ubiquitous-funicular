@@ -63,7 +63,7 @@ class Game():
         self.scale = 2.5
         
         self.eF = objects.ElectricField(self, [50 * self.scale, 50], [100, 100], "up", self.E)
-        self.mgF = objects.MagneticField(self, [300 * self.scale, 50], [100, 100], "in", self.B)
+        self.mgF = objects.MagneticField(self, [300 * self.scale, 50], [100, 100], "out", self.B)
         
         self.proton = objects.Particle(self, [250 * self.scale, 300 * self.scale], [100.0, 0.0], "+")
         self.electron = objects.Particle(self, [200 * self.scale, 300 * self.scale], [100.0, 0.0], "-")
