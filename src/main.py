@@ -9,7 +9,8 @@ def main():
             g.curr_menu.display_menu()
         else: 
             g.game_loop()
-        
+    
+    pygame.image.save(g.window, "proton.png")
     pygame.quit()
     
 if __name__ == "__main__":

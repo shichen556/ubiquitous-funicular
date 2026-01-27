@@ -14,7 +14,7 @@ class Game():
         
         # Framerate control
         self.running = True
-        self.playing = False
+        self.playing = True
         
         self.clock = pygame.time.Clock()
         self.FPS = 60
@@ -27,7 +27,7 @@ class Game():
         user32 = ctypes.windll.user32
         user32.SetProcessDPIAware()
 
-        self.scalex, self.scaley = 0.6, 0.8
+        self.scalex, self.scaley = 1, 1
         self.WIDTH, self.HEIGHT = user32.GetSystemMetrics(0) * self.scalex, user32.GetSystemMetrics(1) * self.scaley
 
         self.GAME_W, self.GAME_H = 450, 350
@@ -60,11 +60,13 @@ class Game():
         self.E = 2
         self.B = 15
         
-        self.eF = objects.ElectricField(self, (200, 100), (100, 220), "right", self.E)
-        self.mgF = objects.MagneticField(self, (100, 100), (400, 400), "out", self.B)
+        self.scale = 2.5
         
-        self.proton = objects.Particle(self, (250, 300), (100.0, 0.0), "+")
-        self.electron = objects.Particle(self, (200, 300), (100.0, 0.0), "-")
+        self.eF = objects.ElectricField(self, [50 * self.scale, 50], [100, 100], "up", self.E)
+        self.mgF = objects.MagneticField(self, [300 * self.scale, 50], [100, 100], "in", self.B)
+        
+        self.proton = objects.Particle(self, [250 * self.scale, 300 * self.scale], [100.0, 0.0], "+")
+        self.electron = objects.Particle(self, [200 * self.scale, 300 * self.scale], [100.0, 0.0], "-")
         
         self.display1 = pygame.Surface((self.DISPLAY_W, self.DISPLAY_H - 260))
         self.display2 = pygame.Surface((self.DISPLAY_W, 260))
@@ -92,49 +94,46 @@ class Game():
             self.display1.fill(self.BG_COLOR)
             
             # Draw field
-            # self.eF.draw()
+            self.eF.draw()
             self.mgF.draw()
             
             # Draw particle
             self.proton.draw()
-            # self.electron.draw()
+            self.electron.draw()
             
             # Draw HUD    
             if not self.is_draw:
                 self.display2.fill(self.BG_COLOR)
                 self.proton_stats.show()
-                # self.electron_stats.show()
+                self.electron_stats.show()
                 
-                # self.eF_stats.show()
-                # self.mgF_stats.show()
+                self.eF_stats.show()
+                self.mgF_stats.show()
                 
                 self.is_draw = True
                 
-            self.t1 = time.time()
-            self.dt = self.t1 - self.t0
-            self.t0 = time.time()
+            self.get_dt()
             
             if not self.is_pause:
                 if self.proton.vel != 0:
                     self.proton_stats.update_pos(self.proton)
                 
-                # if self.proton.eF_collision(self.eF) or self.proton.edge_collision():
-                #     self.update_eF_collision(self.proton_stats, self.proton)
+                if self.proton.eF_collision(self.eF) or self.proton.edge_collision():
+                    self.update_eF_collision(self.proton_stats, self.proton)
                 if self.proton.mgF_collision(self.mgF, self.dt) or self.proton.edge_collision():
+                    self.proton.draw_circular_trajectory(self.mgF.type)
                     self.update_mg_collision(self.proton_stats, self.proton)
                 
-                # if self.electron.eF_collision(self.eF):
-                #     self.update_eF_collision(self.electron_stats, self.electron)
-                # if self.electron.mgF_collision(self.mgF, self.dt) or self.electron.edge_collision():
-                #     self.update_mg_collision(self.electron_stats, self.electron)
+                if self.electron.eF_collision(self.eF):
+                    self.update_eF_collision(self.electron_stats, self.electron)
+                if self.electron.mgF_collision(self.mgF, self.dt) or self.electron.edge_collision():
+                    self.electron.draw_circular_trajectory(self.mgF.type)
+                    self.update_mg_collision(self.electron_stats, self.electron)
                 
                 # Movement
-                self.proton.move(self.dt)
+                # self.proton.move(self.dt)
                 # self.electron.move(self.dt)
                 
-            self.proton.draw_circular_trajectory(self.mgF.type)
-            # self.electron.draw_circular_trajectory(self.mgF.type)
-            
             debug(f"{self.clock.get_fps():.2f}", self.display1)
             
             pygame.draw.line(self.display2, "black", (0, 0), (self.DISPLAY_W, 0), 10)
@@ -193,3 +192,9 @@ class Game():
         # Update stats
         particle_hud.update2(particle)
         particle_hud.update_vel_comp(particle)
+        
+    def get_dt(self):
+        self.t1 = time.time()
+        self.dt = self.t1 - self.t0
+        self.t0 = time.time()
+        
