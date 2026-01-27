@@ -146,12 +146,23 @@ class Particle(Object):
         if self.angle < -2*pi:
             self.angle += 2*pi
         
-    def draw_circular_trajectory(self, type, dir="+"):
+    def draw_circular_trajectory(self, type):
         # Vector direction
+        if self.charge_sign == "+":
+            if type == "out": # proton + in
+                dir = "+"
+            elif type == "in":
+                dir = "-"
+        if self.charge_sign == "-":
+            if type == "out": # proton + in
+                dir = "-"
+            elif type == "in":
+                dir = "+"
+                
         n_hat = vector.norm_perpen(self.vel, dir)
         cx = self.rect.centerx - self.radius * n_hat[0]
         cy = self.rect.centery - self.radius * n_hat[1]
-    
+
         pygame.draw.circle(self.game.display1, "white", (cx, cy), self.radius, 1)
     
     def edge_collision(self):
@@ -167,6 +178,7 @@ class Particle(Object):
         # Set to initial position and velocity
         self.rect.x = self.pos0x
         self.rect.y = self.pos0y
+        self.pos = [self.pos0x, self.pos0y]
         self.angle = 0.0
         self.radius = 0.0
         
@@ -243,9 +255,9 @@ class Particle(Object):
                 
         if type == "in":
             if self.charge_sign == "+":
-                self.angle += self.ang_vel
+                self.angle += self.ang_vel * dt
             elif self.charge_sign == "-":
-                self.angle -= self.ang_vel
+                self.angle -= self.ang_vel * dt
         
         self.vel[0] = self.mod_vel * cos(self.angle)
         self.vel[1] = self.mod_vel * sin(self.angle)
