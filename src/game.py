@@ -5,6 +5,7 @@ import title
 
 from debug.debug import debug
 import time
+import ctypes
 
 class Game():
     def __init__(self):
@@ -22,8 +23,15 @@ class Game():
         self.t1 = 0
         
         # Pygame screen setup
+        # Get monitor size
+        user32 = ctypes.windll.user32
+        user32.SetProcessDPIAware()
+
+        self.scalex, self.scaley = 0.6, 0.8
+        self.WIDTH, self.HEIGHT = user32.GetSystemMetrics(0) * self.scalex, user32.GetSystemMetrics(1) * self.scaley
+
         self.GAME_W, self.GAME_H = 450, 350
-        self.DISPLAY_W, self.DISPLAY_H = 960, 720
+        self.DISPLAY_W, self.DISPLAY_H = self.WIDTH, self.HEIGHT
         
         self.display = pygame.Surface((self.DISPLAY_W, self.DISPLAY_H)) # Title Offscreen
         self.window = pygame.display.set_mode((self.DISPLAY_W, self.DISPLAY_H)) # Screen
