@@ -201,12 +201,21 @@ class Particle(Object):
         self.mod_vel = sqrt(self.vel[0]**2 + self.vel[1]**2)
 
     def draw(self):
+        self.line_length = 2.6 * self.scale
+        self.line_thighness = 1.3 * self.scale
+        self.circle_r = 8 * self.scale
         if self.charge_sign == "+":
             self.color = "#FF4500"
+            self.color1 = "#8B0000"
+            pygame.draw.circle(self.game.display1, self.color, self.rect.center, self.circle_r)
+            pygame.draw.line(self.game.display1, self.color1, (self.rect.centerx - self.line_length, self.rect.centery), (self.rect.centerx + self.line_length, self.rect.centery), self.line_thighness)
+            pygame.draw.line(self.game.display1, self.color1, (self.rect.centerx, self.rect.centery - self.line_length), (self.rect.centerx, self.rect.centery + self.line_length), self.line_thighness)
         else:  
             self.color = "#1E90FF"
-        pygame.draw.circle(self.game.display1, self.color, self.rect.center, 10 * self.scale)
-    
+            self.color1 = "#0000CD"
+            pygame.draw.circle(self.game.display1, self.color, self.rect.center, self.circle_r)
+            pygame.draw.line(self.game.display1, self.color1, (self.rect.centerx - self.line_length, self.rect.centery), (self.rect.centerx + self.line_length, self.rect.centery), self.line_thighness)
+            
     def eF_collision(self, e_field):
         if self.rect.colliderect(e_field.square):
             self.apply_e_force(e_field.type, e_field.E)

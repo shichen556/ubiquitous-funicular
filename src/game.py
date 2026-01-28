@@ -47,7 +47,7 @@ class Game():
         # Color palette
         self.BG_COLOR = "#0A0A23"
         self.TITLE_COLOR = "#00BFFF"
-        self.MENU_COLOR = ["#00BFFF", "#2A3B7A"]
+        self.MENU_COLOR = ["#00BFFF", "#2A3B7A"] # 2A 30 -85
         self.TXT_COLOR = "#B0C4FF"
         
         # Load Menu options
@@ -65,8 +65,8 @@ class Game():
         self.eF = objects.ElectricField(self, [50 * self.scale, 50], [100, 100], "up", self.E)
         self.mgF = objects.MagneticField(self, [300 * self.scale, 50], [100, 100], "out", self.B)
         
-        self.proton = objects.Particle(self, [250 * self.scale, 300 * self.scale], [100.0, 0.0], "+")
-        self.electron = objects.Particle(self, [200 * self.scale, 300 * self.scale], [100.0, 0.0], "-")
+        self.proton = objects.Particle(self, [280 * self.scale, 200 * self.scale], [100.0, 0.0], "+")
+        self.electron = objects.Particle(self, [200 * self.scale, 200 * self.scale], [100.0, 0.0], "-")
         
         self.display1 = pygame.Surface((self.DISPLAY_W, self.DISPLAY_H - 260))
         self.display2 = pygame.Surface((self.DISPLAY_W, 260))
@@ -94,7 +94,7 @@ class Game():
             self.display1.fill(self.BG_COLOR)
             
             # Draw field
-            self.eF.draw()
+            # self.eF.draw()
             self.mgF.draw()
             
             # Draw particle
