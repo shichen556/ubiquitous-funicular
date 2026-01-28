@@ -95,7 +95,7 @@ class Game():
             
             # Draw field
             # self.eF.draw()
-            self.mgF.draw()
+            # self.mgF.draw()
             
             # Draw particle
             self.proton.draw()

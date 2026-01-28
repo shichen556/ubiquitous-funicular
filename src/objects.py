@@ -201,9 +201,9 @@ class Particle(Object):
         self.mod_vel = sqrt(self.vel[0]**2 + self.vel[1]**2)
 
     def draw(self):
-        self.line_length = 2.6 * self.scale
-        self.line_thighness = 1.3 * self.scale
-        self.circle_r = 8 * self.scale
+        self.line_length = 4 * self.scale
+        self.line_thighness = 2 * self.scale
+        self.circle_r = 12 * self.scale
         if self.charge_sign == "+":
             self.color = "#FF4500"
             self.color1 = "#8B0000"
