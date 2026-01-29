@@ -1,5 +1,5 @@
 import pygame
-import vector
+import utils.vector as vector
 
 class Object():
     def __init__(self, game):
@@ -7,7 +7,7 @@ class Object():
         
         self.run_display = True
         
-        self.scale = 5
+        self.scale = 1
     
     def blit_scren(self):
         self.game.window.blit(self.game.display1, (0,0))
@@ -25,7 +25,7 @@ class Field(Object):
         
         self.square = pygame.Rect(pos[0], pos[1], size[0] * self.scale, size[1] * self.scale)
         
-        self.edge_color4 = "#E3F2FD"
+        self.edge_color = "#E3F2FD"
         
 class ElectricField(Field):
     def __init__(self, game, pos, size, type, strength):
@@ -40,7 +40,7 @@ class ElectricField(Field):
         self.arrow_length = 10 * self.scale
         self.arrow_size = 6 * self.scale
         self.arrow_spacing = 50 * self.scale
-        pygame.draw.rect(self.game.display1, self.edge_color4, self.square, 1)
+        pygame.draw.rect(self.game.display1, self.edge_color, self.square, 1)
         
         if self.type == "left" or self.type == "right":
             for y in range(self.square.top + 20 * self.scale, self.square.bottom, self.spacing):
@@ -86,7 +86,7 @@ class MagneticField(Field):
     def draw(self):
         self.color_in =  "#9B30FF"
         self.color_out = "#00FFCC"
-        pygame.draw.rect(self.game.display1, self.edge_color4, self.square, 1)
+        pygame.draw.rect(self.game.display1, self.edge_color, self.square, 1)
     
         for y in range(self.square.top + self.offset, self.square.bottom, self.spacing):
             for x in range(self.square.left + self.offset, self.square.right, self.spacing):

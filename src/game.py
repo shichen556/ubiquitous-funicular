@@ -2,6 +2,7 @@ import pygame
 import menu
 import objects
 import title
+import tiles
 
 from debug.debug import debug
 import time
@@ -31,11 +32,14 @@ class Game():
         self.WIDTH, self.HEIGHT = user32.GetSystemMetrics(0) * self.scalex, user32.GetSystemMetrics(1) * self.scaley
 
         self.GAME_W, self.GAME_H = 450, 350
-        self.DISPLAY_W, self.DISPLAY_H = self.WIDTH, self.HEIGHT
+        self.DISPLAY_W, self.DISPLAY_H = int(self.WIDTH), int(self.HEIGHT)
+        self.DISPLAY_H2 = self.DISPLAY_H-260
         
         self.display = pygame.Surface((self.DISPLAY_W, self.DISPLAY_H)) # Title Offscreen
         self.window = pygame.display.set_mode((self.DISPLAY_W, self.DISPLAY_H)) # Screen
         pygame.display.set_caption("Runner")
+        self.display1 = pygame.Surface((self.DISPLAY_W, self.DISPLAY_H2))
+        self.display2 = pygame.Surface((self.DISPLAY_W, 260))
         
         # Keyboard control
         self.actions = {"up": False, "down": False, "left": False, "right": False, 
@@ -60,7 +64,7 @@ class Game():
         self.E = 2
         self.B = 15
         
-        self.scale = 2.5
+        self.scale = 1
         
         self.eF = objects.ElectricField(self, [50 * self.scale, 50], [100, 100], "up", self.E)
         self.mgF = objects.MagneticField(self, [300 * self.scale, 50], [100, 100], "out", self.B)
@@ -68,9 +72,6 @@ class Game():
         self.proton = objects.Particle(self, [280 * self.scale, 200 * self.scale], [100.0, 0.0], "+")
         self.electron = objects.Particle(self, [200 * self.scale, 200 * self.scale], [100.0, 0.0], "-")
         
-        self.display1 = pygame.Surface((self.DISPLAY_W, self.DISPLAY_H - 260))
-        self.display2 = pygame.Surface((self.DISPLAY_W, 260))
-           
         # Load HUD
         self.proton_stats = menu.ParticleHUD(self, (10, 140-130), (350, 130), self.B, self.proton)
         self.electron_stats = menu.ParticleHUD(self, (10, 140), (350, 130), self.B, self.electron)
@@ -78,14 +79,15 @@ class Game():
         self.eF_stats = menu.FieldHUD(self, (10 + 350, 140-130), (175, 130), self.eF)
         self.mgF_stats = menu.FieldHUD(self, (10 + 350, 140), (175, 130), self.mgF)
         
+        # Load Tiles
+        self.tile = tiles.TileMap(self)
+        
         self.is_draw = False
         self.is_pause = False
         
     # Game loop
     def game_loop(self):
-        self.electron.reset_pos()
-        self.proton.reset_pos()
-        
+        self.reset()
         while self.playing:
             self.check_events()
             if self.actions["start"] or self.actions["back"]:
@@ -93,52 +95,27 @@ class Game():
             
             self.display1.fill(self.BG_COLOR)
             
-            # Draw field
-            # self.eF.draw()
-            # self.mgF.draw()
-            
-            # Draw particle
-            self.proton.draw()
-            self.electron.draw()
-            
-            # Draw HUD    
-            if not self.is_draw:
-                self.display2.fill(self.BG_COLOR)
-                self.proton_stats.show()
-                self.electron_stats.show()
-                
-                self.eF_stats.show()
-                self.mgF_stats.show()
-                
-                self.is_draw = True
-                
+            self.draw_objects()
             self.get_dt()
             
             if not self.is_pause:
                 if self.proton.vel != 0:
                     self.proton_stats.update_pos(self.proton)
-                
-                if self.proton.eF_collision(self.eF) or self.proton.edge_collision():
-                    self.update_eF_collision(self.proton_stats, self.proton)
-                if self.proton.mgF_collision(self.mgF, self.dt) or self.proton.edge_collision():
-                    self.proton.draw_circular_trajectory(self.mgF.type)
-                    self.update_mg_collision(self.proton_stats, self.proton)
-                
-                if self.electron.eF_collision(self.eF):
-                    self.update_eF_collision(self.electron_stats, self.electron)
-                if self.electron.mgF_collision(self.mgF, self.dt) or self.electron.edge_collision():
-                    self.electron.draw_circular_trajectory(self.mgF.type)
-                    self.update_mg_collision(self.electron_stats, self.electron)
+                if self.electron.vel != 0:
+                    self.electron_stats.update_pos(self.proton)
+                self.check_collision()
                 
                 # Movement
                 # self.proton.move(self.dt)
                 # self.electron.move(self.dt)
+            else:
+                self.dt = 0
                 
             debug(f"{self.clock.get_fps():.2f}", self.display1)
             
             pygame.draw.line(self.display2, "black", (0, 0), (self.DISPLAY_W, 0), 10)
-            self.window.blit(self.display1, (0,0))
-            self.window.blit(self.display2, (0,self.DISPLAY_H-260))
+            self.window.blit(self.display1, (0, 0))
+            self.window.blit(self.display2, (0, self.DISPLAY_H2))
             
             pygame.display.update()
             self.reset_keys()
@@ -197,4 +174,43 @@ class Game():
         self.t1 = time.time()
         self.dt = self.t1 - self.t0
         self.t0 = time.time()
+    
+    def reset(self):
+        self.electron.reset_pos()
+        self.proton.reset_pos()
+    
+    def draw_objects(self):
+        self.tile.draw_map()
         
+        # Draw field
+        self.eF.draw()
+        self.mgF.draw()
+        
+        # Draw particle
+        self.proton.draw()
+        self.electron.draw()
+
+        # Draw HUD    
+        if not self.is_draw:
+            self.display2.fill(self.BG_COLOR)
+            
+            self.proton_stats.show()
+            self.electron_stats.show()
+            
+            self.eF_stats.show()
+            self.mgF_stats.show()
+            
+            self.is_draw = True
+                
+    def check_collision(self):
+        if self.proton.eF_collision(self.eF) or self.proton.edge_collision():
+            self.update_eF_collision(self.proton_stats, self.proton)
+        if self.proton.mgF_collision(self.mgF, self.dt) or self.proton.edge_collision():
+            self.proton.draw_circular_trajectory(self.mgF.type)
+            self.update_mg_collision(self.proton_stats, self.proton)
+        
+        if self.electron.eF_collision(self.eF):
+            self.update_eF_collision(self.electron_stats, self.electron)
+        if self.electron.mgF_collision(self.mgF, self.dt) or self.electron.edge_collision():
+            self.electron.draw_circular_trajectory(self.mgF.type)
+            self.update_mg_collision(self.electron_stats, self.electron)
