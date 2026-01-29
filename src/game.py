@@ -66,11 +66,23 @@ class Game():
         
         self.scale = 1
         
-        self.eF = objects.ElectricField(self, [50 * self.scale, 50], [100, 100], "up", self.E)
-        self.mgF = objects.MagneticField(self, [300 * self.scale, 50], [100, 100], "out", self.B)
+        self.eF_pos = [48, 48]
+        self.mgF_pos = [288, 48]
         
-        self.proton = objects.Particle(self, [280 * self.scale, 200 * self.scale], [100.0, 0.0], "+")
-        self.electron = objects.Particle(self, [200 * self.scale, 200 * self.scale], [100.0, 0.0], "-")
+        self.eF_size = [112, 112]
+        self.mgF_size = [112, 112]
+        
+        self.eF = objects.ElectricField(self, self.eF_pos, self.eF_size, "up", self.E)
+        self.mgF = objects.MagneticField(self, self.mgF_pos, self.mgF_size, "out", self.B)
+        
+        self.proton_pos = [288, 192]
+        self.electron_pos = [192, 192]
+        
+        self.proton_vel = [100.0, 0.0]
+        self.electron_vel = [100.0, 0.0]
+        
+        self.proton = objects.Particle(self, self.proton_pos, self.proton_vel, "+")
+        self.electron = objects.Particle(self, self.electron_pos, self.electron_vel, "-")
         
         # Load HUD
         self.proton_stats = menu.ParticleHUD(self, (10, 140-130), (350, 130), self.B, self.proton)

@@ -31,45 +31,49 @@ class ElectricField(Field):
     def __init__(self, game, pos, size, type, strength):
         super().__init__(game, pos, size, type, strength)
         
-        self.spacing = 30 * self.scale
+        self.line_spacing = 32 * self.scale
         self.E = strength
     
     def draw(self):
         self.color = "#FFD700"
         
+        self.offset = 24 * self.scale
         self.arrow_length = 10 * self.scale
         self.arrow_size = 6 * self.scale
         self.arrow_spacing = 50 * self.scale
-        pygame.draw.rect(self.game.display1, self.edge_color, self.square, 1)
+        
+        self.line_width = 2
+        self.square_width = 1
+        pygame.draw.rect(self.game.display1, self.edge_color, self.square, self.square_width)
         
         if self.type == "left" or self.type == "right":
-            for y in range(self.square.top + 20 * self.scale, self.square.bottom, self.spacing):
+            for y in range(self.square.top + self.offset, self.square.bottom, self.line_spacing):
                 # Horizontal lines
-                pygame.draw.line(self.game.display1, self.color, (self.square.left, y), (self.square.right, y), 2)
+                pygame.draw.line(self.game.display1, self.color, (self.square.left, y), (self.square.right, y), self.line_width)
                 
                 # Arrow
                 if self.type == "left":
-                    for x in range(self.square.left + 20 * self.scale, self.square.right, self.arrow_spacing):
-                        pygame.draw.line(self.game.display1, self.color, (x,y), (x + self.arrow_length, y - self.arrow_size), 2)
-                        pygame.draw.line(self.game.display1, self.color, (x,y), (x + self.arrow_length, y + self.arrow_size), 2)
+                    for x in range(self.square.left + self.offset, self.square.right, self.arrow_spacing):
+                        pygame.draw.line(self.game.display1, self.color, (x,y), (x + self.arrow_length, y - self.arrow_size), self.line_width)
+                        pygame.draw.line(self.game.display1, self.color, (x,y), (x + self.arrow_length, y + self.arrow_size), self.line_width)
                 else:
-                    for x in range(self.square.right - 20 * self.scale, self.square.left, -self.arrow_spacing):
-                        pygame.draw.line(self.game.display1, self.color, (x,y), (x - self.arrow_length, y - self.arrow_size), 2)
-                        pygame.draw.line(self.game.display1, self.color, (x,y), (x - self.arrow_length, y + self.arrow_size), 2)
+                    for x in range(self.square.right - self.offset, self.square.left, -self.arrow_spacing):
+                        pygame.draw.line(self.game.display1, self.color, (x,y), (x - self.arrow_length, y - self.arrow_size), self.line_width)
+                        pygame.draw.line(self.game.display1, self.color, (x,y), (x - self.arrow_length, y + self.arrow_size), self.line_width)
         elif self.type == "up" or self.type == "down":
-            for x in range(self.square.left + 20 * self.scale, self.square.right, self.spacing):
+            for x in range(self.square.left + self.offset, self.square.right, self.line_spacing):
                 # Vertical lines
-                pygame.draw.line(self.game.display1, self.color, (x, self.square.top), (x, self.square.bottom), 2)
+                pygame.draw.line(self.game.display1, self.color, (x, self.square.top), (x, self.square.bottom), self.line_width)
                 
                 # Arrow
                 if self.type == "up":
-                    for y in range(self.square.top + 20 * self.scale, self.square.bottom, self.arrow_spacing):
-                        pygame.draw.line(self.game.display1, self.color, (x,y), (x - self.arrow_size, y + self.arrow_length), 2)
-                        pygame.draw.line(self.game.display1, self.color, (x,y), (x + self.arrow_size, y + self.arrow_length), 2)
+                    for y in range(self.square.top + self.offset, self.square.bottom, self.arrow_spacing):
+                        pygame.draw.line(self.game.display1, self.color, (x,y), (x - self.arrow_size, y + self.arrow_length), self.line_width)
+                        pygame.draw.line(self.game.display1, self.color, (x,y), (x + self.arrow_size, y + self.arrow_length), self.line_width)
                 else:
-                    for y in range(self.square.bottom - 20 * self.scale, self.square.top, -self.arrow_spacing):
-                        pygame.draw.line(self.game.display1, self.color, (x,y), (x - self.arrow_size, y - self.arrow_length), 2)
-                        pygame.draw.line(self.game.display1, self.color, (x,y), (x + self.arrow_size, y - self.arrow_length), 2)
+                    for y in range(self.square.bottom - self.offset, self.square.top, -self.arrow_spacing):
+                        pygame.draw.line(self.game.display1, self.color, (x,y), (x - self.arrow_size, y - self.arrow_length), self.line_width)
+                        pygame.draw.line(self.game.display1, self.color, (x,y), (x + self.arrow_size, y - self.arrow_length), self.line_width)
     
 class MagneticField(Field):
     def __init__(self, game, pos, size, type, strength):
@@ -203,7 +207,7 @@ class Particle(Object):
     def draw(self):
         self.line_length = 4 * self.scale
         self.line_thighness = 2 * self.scale
-        self.circle_r = 12 * self.scale
+        self.circle_r = 8 * self.scale
         if self.charge_sign == "+":
             self.color = "#FF4500"
             self.color1 = "#8B0000"
