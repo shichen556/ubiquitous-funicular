@@ -1,12 +1,14 @@
+import ctypes
+import os
 import pygame
+import time
+
+import hud
 import menu
 import objects
-import title
 import tiles
 
 from debug.debug import debug
-import time
-import ctypes
 
 class Game():
     def __init__(self):
@@ -31,7 +33,6 @@ class Game():
         self.scalex, self.scaley = 0.8, 0.8
         self.WIDTH, self.HEIGHT = user32.GetSystemMetrics(0) * self.scalex, user32.GetSystemMetrics(1) * self.scaley
 
-        self.GAME_W, self.GAME_H = 450, 350
         self.DISPLAY_W, self.DISPLAY_H = int(self.WIDTH), int(self.HEIGHT)
         self.DISPLAY_H2 = self.DISPLAY_H-260
         
@@ -54,10 +55,14 @@ class Game():
         self.MENU_COLOR = ["#00BFFF", "#2A3B7A"] # 2A 30 -85
         self.TXT_COLOR = "#B0C4FF"
         
+        # Stack structure for states
+        self.state_stack = []
+        self.load_states()
+        
         # Load Menu options
-        self.main_menu = title.MainMenu(self)
-        self.options = title.OptionsMenu(self)
-        self.credits = title.CreditsMenu(self)
+        self.main_menu = menu.MainMenu(self)
+        self.options = menu.OptionsMenu(self)
+        self.credits = menu.CreditsMenu(self)
         self.curr_menu = self.main_menu
         
         # Load In-game
@@ -85,11 +90,11 @@ class Game():
         self.electron = objects.Particle(self, self.electron_pos, self.electron_vel, "-")
         
         # Load HUD
-        self.proton_stats = menu.ParticleHUD(self, (10, 140-130), (350, 130), self.B, self.proton)
-        self.electron_stats = menu.ParticleHUD(self, (10, 140), (350, 130), self.B, self.electron)
+        self.proton_stats = hud.ParticleHUD(self, (10, 140-130), (350, 130), self.B, self.proton)
+        self.electron_stats = hud.ParticleHUD(self, (10, 140), (350, 130), self.B, self.electron)
         
-        self.eF_stats = menu.FieldHUD(self, (10 + 350, 140-130), (175, 130), self.eF)
-        self.mgF_stats = menu.FieldHUD(self, (10 + 350, 140), (175, 130), self.mgF)
+        self.eF_stats = hud.FieldHUD(self, (10 + 350, 140-130), (175, 130), self.eF)
+        self.mgF_stats = hud.FieldHUD(self, (10 + 350, 140), (175, 130), self.mgF)
         
         # Load Tiles
         self.tile = tiles.TileMap(self)
@@ -226,3 +231,8 @@ class Game():
         if self.electron.mgF_collision(self.mgF, self.dt) or self.electron.edge_collision():
             self.electron.draw_circular_trajectory(self.mgF.type)
             self.update_mg_collision(self.electron_stats, self.electron)
+    
+    # State management
+    def update(self):
+        self.state_stack[-1].update(self.dt, self.actions)
+    

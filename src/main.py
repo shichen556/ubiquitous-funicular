@@ -10,7 +10,6 @@ def main():
         else: 
             g.game_loop()
     
-    pygame.image.save(g.window, "img.png")
     pygame.quit()
     
 if __name__ == "__main__":
