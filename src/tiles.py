@@ -5,13 +5,12 @@ class Tile:
         self.game = game
         
         self.tile_size = 16
-        self.offset = 2
+        self.length = 2
         self.color = "#E3F2FD"
         
     def draw(self, pos):
-        for x in range(0, self.tile_size, 2 * self.offset):
-            pygame.draw.line(self.game.display1, self.color, (pos[0] + x, pos[1]), (pos[0] + x + self.offset, pos[1]))
-            pygame.draw.line(self.game.display1, self.color, (pos[0], pos[1] + x), (pos[0], pos[1] + x + self.offset))
+        pygame.draw.line(self.game.display1, self.color, (pos[0] - self.length, pos[1]), (pos[0] + self.length, pos[1]))
+        pygame.draw.line(self.game.display1, self.color, (pos[0], pos[1] - self.length), (pos[0], pos[1] + self.length))
 
 class TileMap(Tile):
     def __init__(self, game):
