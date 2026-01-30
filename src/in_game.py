@@ -1,6 +1,4 @@
-import pygame
 import hud
-import states.menu as menu
 import objects
 import tiles
 
@@ -40,7 +38,7 @@ class InGame:
         self.tile = tiles.TileMap(self)
     
     def draw_objects(self):
-        self.tile.draw_map()
+        # self.tile.draw_map()
         
         # Draw field
         self.eF.draw()
@@ -86,6 +84,17 @@ class InGame:
             self.electron.draw_circular_trajectory(self.mgF.type)
             self.update_mg_collision(self.electron_stats, self.electron)
     
+    def update(self):
+        if self.proton.vel != 0:
+            self.proton_stats.update_pos(self.proton)
+        if self.electron.vel != 0:
+            self.electron_stats.update_pos(self.proton)
+        self.check_collision()
+        
+        # Movement
+        # self.proton.move(self.dt)
+        # self.electron.move(self.dt)
+        
     def reset(self):
         self.electron.reset_pos()
         self.proton.reset_pos()

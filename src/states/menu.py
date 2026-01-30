@@ -94,8 +94,4 @@ class MainMenu(Menu):
             pass
         elif self.menu_options[self.state_index] == "Exit":
             self.game.running = False
-        
-
-
-
-            
+                    

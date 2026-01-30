@@ -63,7 +63,6 @@ class Game():
         
     # Game loop
     def game_loop(self):
-        self.reset()
         while self.playing:
             self.check_events()
             if self.actions["start"] or self.actions["back"]:
@@ -71,19 +70,11 @@ class Game():
             
             self.display1.fill(self.BG_COLOR)
             
-            self.draw_objects()
+            self.in_game.draw_objects()
             self.get_dt()
             
             if not self.is_pause:
-                if self.proton.vel != 0:
-                    self.proton_stats.update_pos(self.proton)
-                if self.electron.vel != 0:
-                    self.electron_stats.update_pos(self.proton)
-                self.check_collision()
-                
-                # Movement
-                # self.proton.move(self.dt)
-                # self.electron.move(self.dt)
+                self.in_game.update()
             else:
                 self.dt = 0
                 
@@ -102,8 +93,6 @@ class Game():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running, self.playing = False, False
-                self.curr_menu.run_display = False
-                
             if event.type == pygame.KEYDOWN:
                 if event.key in [pygame.K_UP, pygame.K_w]:
                     self.actions["up"] = True

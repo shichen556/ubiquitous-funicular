@@ -1,11 +1,10 @@
-import pygame
 from menu import Menu
 
 class Options(Menu):
     def __init__(self, game):
         super().__init__(game)
         self.state_index = 0
-        self.menu_options = {0: "Volume", 1: "Controls"}
+        self.menu_options = {0: "Screen", 1: "Controls"}
         
         SEP = 20
         OFFSET = int(self.game.DISPLAY_H*0.1)
@@ -42,3 +41,4 @@ class Options(Menu):
         elif self.game.actions["start"]:
             # TODO: Create a screensize menu
             pass
+        

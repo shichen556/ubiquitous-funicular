@@ -1,6 +1,6 @@
 from menu import Menu
 
-class CreditsMenu(Menu):
+class Credits(Menu):
     def __init__(self, game):
         super().__init__(game)
     
