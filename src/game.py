@@ -236,3 +236,5 @@ class Game():
     def update(self):
         self.state_stack[-1].update(self.dt, self.actions)
     
+    def load_states(self):
+        self.state_stack.append()
