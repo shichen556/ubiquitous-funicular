@@ -1,9 +1,8 @@
 import pygame
-from states.state import State
 
 from debug.debug import debug
 
-class Menu(State):
+class Menu():
     def __init__(self, game):
         super().__init__(game)
         

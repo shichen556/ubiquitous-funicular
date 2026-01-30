@@ -13,7 +13,7 @@ class Game():
         
         # Framerate control
         self.running = True
-        self.playing = True
+        self.playing = False
         
         self.clock = pygame.time.Clock()
         self.FPS = 60
@@ -50,10 +50,6 @@ class Game():
         self.TITLE_COLOR = "#00BFFF"
         self.MENU_COLOR = ["#00BFFF", "#2A3B7A"]
         self.TXT_COLOR = "#B0C4FF"
-        
-        # Stack structure for states
-        self.state_stack = []
-        self.load_states()
         
         # Load In-game
         self.in_game = InGame()
@@ -128,10 +124,4 @@ class Game():
         self.t1 = time.time()
         self.dt = self.t1 - self.t0
         self.t0 = time.time()
-    
-    # State management
-    def update(self):
-        self.state_stack[-1].update(self.dt, self.actions)
-    
-    def load_states(self):
-        self.state_stack.append()
+        
