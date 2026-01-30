@@ -1,10 +1,9 @@
 import ctypes
-import os
 import pygame
 import time
 
 import hud
-import menu
+import states.menu as menu
 import objects
 import tiles
 
@@ -58,12 +57,6 @@ class Game():
         # Stack structure for states
         self.state_stack = []
         self.load_states()
-        
-        # Load Menu options
-        self.main_menu = menu.MainMenu(self)
-        self.options = menu.OptionsMenu(self)
-        self.credits = menu.CreditsMenu(self)
-        self.curr_menu = self.main_menu
         
         # Load In-game
         self.E = 2
