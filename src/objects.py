@@ -22,7 +22,6 @@ class Field(Object):
         self.type = type
         self.strength = strength
         
-        
         self.square = pygame.Rect(pos[0], pos[1], size[0] * self.scale, size[1] * self.scale)
         
         self.edge_color = "#E3F2FD"

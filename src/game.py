@@ -3,7 +3,7 @@ import pygame
 import time
 
 from in_game import InGame
-
+import states.menu as menu
 from debug.debug import debug
 
 class Game():
@@ -35,6 +35,7 @@ class Game():
         self.display = pygame.Surface((self.DISPLAY_W, self.DISPLAY_H)) # Title Offscreen
         self.window = pygame.display.set_mode((self.DISPLAY_W, self.DISPLAY_H)) # Screen
         pygame.display.set_caption("Runner")
+        
         self.display1 = pygame.Surface((self.DISPLAY_W, self.DISPLAY_H2))
         self.display2 = pygame.Surface((self.DISPLAY_W, 260))
         
@@ -51,8 +52,12 @@ class Game():
         self.MENU_COLOR = ["#00BFFF", "#2A3B7A"]
         self.TXT_COLOR = "#B0C4FF"
         
+        # Load Menu options
+        self.main_menu = menu.MainMenu(self)
+        self.curr_menu = self.main_menu
+        
         # Load In-game
-        self.in_game = InGame()
+        self.in_game = InGame(self)
         
         self.is_draw = False
         self.is_pause = False
