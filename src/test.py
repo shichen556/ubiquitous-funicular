@@ -16,9 +16,9 @@ output2 = TextBox(win, 475, 280, 60, 60, fontSize=30)
 slider3 = Slider(win, 100, 350, 400, 400, min=0, max=99, step=1, initial=0)
 output3 = TextBox(win, 475, 400, 60, 60, fontSize=30)
 
-output1.disable()  # Act as label instead of textbox
-output2.disable()  # Act as label instead of textbox
-output3.disable()  # Act as label instead of textbox
+output1.enable()  # Act as label instead of textbox
+output2.enable()  # Act as label instead of textbox
+output3.enable()  # Act as label instead of textbox
 
 run = True
 while run:
