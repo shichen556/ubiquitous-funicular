@@ -1,6 +1,7 @@
 import UI.hud as hud
 import objects
 import tiles
+import UI.input as input
 
 class InGame:
     def __init__(self, game):
@@ -47,6 +48,9 @@ class InGame:
         self.eF_stats = hud.FieldHUD(self.game, self.hud_field_pos, self.hud_field_size, self.eF)
         self.mgF_stats = hud.FieldHUD(self.game, (self.hud_field_pos[0], self.hud_field_pos[1]+self.hud_posy_offsety), self.hud_field_size, self.mgF)
         
+        # Load UI
+        self.label1 = input.Control(self.game.display2, (550, 50), (200, 50), lambda: print(self.label1.textbox.getText()))
+            
         # Load Tiles
         self.tile = tiles.TileMap(self.game)
     
@@ -72,6 +76,8 @@ class InGame:
             self.mgF_stats.show()
             
             self.is_draw = True
+        
+        self.label1.run()
             
     def update_eF_collision(self, particle_hud, particle):
         # Update stats
