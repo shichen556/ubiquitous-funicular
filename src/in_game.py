@@ -1,4 +1,4 @@
-import hud
+import UI.hud as hud
 import objects
 import tiles
 
@@ -6,6 +6,7 @@ class InGame:
     def __init__(self, game):
         self.game = game
         
+        self.HUD_BG_COLOR = "#494949"
         self.E = 2
         self.B = 15
         
@@ -30,11 +31,21 @@ class InGame:
         self.electron = objects.Particle(self.game, self.electron_pos, self.electron_vel, "-")
         
         # Load HUD
-        self.proton_stats = hud.ParticleHUD(self.game, (10, 140-130), (350, 130), self.B, self.proton)
-        self.electron_stats = hud.ParticleHUD(self.game, (10, 140), (350, 130), self.B, self.electron)
+        self.hud_particle_pos = (0, 5)
         
-        self.eF_stats = hud.FieldHUD(self.game, (10 + 350, 140-130), (175, 130), self.eF)
-        self.mgF_stats = hud.FieldHUD(self.game, (10 + 350, 140), (175, 130), self.mgF)
+        self.hud_particle_size = (350, 130)
+        self.hud_field_size = (175, 130)
+        
+        self.hud_posx_offsetx = self.hud_particle_size[0] - 5
+        self.hud_posy_offsety = self.hud_particle_size[1] - 5
+        
+        self.hud_field_pos = (self.hud_posx_offsetx, self.hud_particle_pos[1])
+        
+        self.proton_stats = hud.ParticleHUD(self.game, self.hud_particle_pos, self.hud_particle_size, self.B, self.proton)
+        self.electron_stats = hud.ParticleHUD(self.game, (self.hud_particle_pos[0], self.hud_particle_pos[1]+self.hud_posy_offsety), self.hud_particle_size, self.B, self.electron)
+        
+        self.eF_stats = hud.FieldHUD(self.game, self.hud_field_pos, self.hud_field_size, self.eF)
+        self.mgF_stats = hud.FieldHUD(self.game, (self.hud_field_pos[0], self.hud_field_pos[1]+self.hud_posy_offsety), self.hud_field_size, self.mgF)
         
         # Load Tiles
         self.tile = tiles.TileMap(self.game)
@@ -52,7 +63,7 @@ class InGame:
 
         # Draw HUD    
         if not self.game.is_draw:
-            self.game.display2.fill(self.game.BG_COLOR)
+            self.game.display2.fill(self.HUD_BG_COLOR)
             
             self.proton_stats.show()
             self.electron_stats.show()

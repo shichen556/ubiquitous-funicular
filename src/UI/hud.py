@@ -10,14 +10,16 @@ class HUD:
         self.rect_in = pygame.Rect(pos[0] + 5, pos[1] + 5, size[0] - 10, size[1]- 10)
 
         self.size = 10
-        self.color = "black"
+        self.text_color = "black"
+        self.BG_color = "#787878"
+        self.BG_contr_color = "#3C3C3C"
         
         # First column
         self.sepx = 10
         self.x1 = self.rect_in.x + self.sepx
         self.sepy = 10
         self.y = self.rect_in.y + self.sepy
-        self.offsety = 20
+        self.text_offsety = 20
         
         # Second column
         self.x2 = self.x1 + (self.rect_ext.width*0.45)
@@ -28,16 +30,16 @@ class HUD:
         text_surf = font.render(text, True, color)
         text_rect = text_surf.get_rect(topleft = (x,y))
         
-        pygame.draw.rect(self.game.display2, "#787878", text_rect)
+        pygame.draw.rect(self.game.display2, self.BG_color, text_rect)
         self.game.display2.blit(text_surf, text_rect)
         
     def draw_HUD_rect(self):
-        pygame.draw.rect(self.game.display2, "#3C3C3C", self.rect_ext)
-        pygame.draw.rect(self.game.display2, "#787878", self.rect_in)
+        pygame.draw.rect(self.game.display2, self.BG_contr_color, self.rect_ext)
+        pygame.draw.rect(self.game.display2, self.BG_color, self.rect_in)
     
     def draw_rect(self, pos):
         self.rect = pygame.Rect(pos[0], pos[1], 170, 15)
-        pygame.draw.rect(self.game.display2, "#787878", self.rect)
+        pygame.draw.rect(self.game.display2, self.BG_color, self.rect)
         
 class ParticleHUD(HUD):
     def __init__(self, game, pos, size, B, particle):
@@ -79,7 +81,7 @@ class ParticleHUD(HUD):
                 f"Charge value: {self.charge_value}*10^-19 C"]
         
         for i in range(len(text)):
-            self.draw_text(text[i], self.size, self.x1, self.y + self.offsety*i, self.color)
+            self.draw_text(text[i], self.size, self.x1, self.y + self.text_offsety*i, self.text_color)
 
     def show_variables(self):
         self.show_vel()
@@ -90,21 +92,21 @@ class ParticleHUD(HUD):
 
     def show_pos(self):
         self.draw_rect((self.x2, self.y))
-        self.draw_text(f"Position (x, y): ({self.pos[0]}, {self.pos[1]}) m", self.size, self.x2, self.y + self.offsety*0, self.color)
+        self.draw_text(f"Position (x, y): ({self.pos[0]}, {self.pos[1]}) m", self.size, self.x2, self.y + self.text_offsety*0, self.text_color)
     
     def show_vel_comp(self):
-        self.draw_rect((self.x2, self.y + self.offsety))
-        self.draw_text(f"Velocity (vx, vy): ({self.velx}, {self.vely}) m/s", self.size, self.x2, self.y + self.offsety*1, self.color)
+        self.draw_rect((self.x2, self.y + self.text_offsety))
+        self.draw_text(f"Velocity (vx, vy): ({self.velx}, {self.vely}) m/s", self.size, self.x2, self.y + self.text_offsety*1, self.text_color)
     
     def show_vel(self):
-        self.draw_rect((self.x1, self.y + 4*self.offsety))
-        self.draw_text(f"Velocity: {self.mod_vel:.3} m/s", self.size, self.x1, self.y + self.offsety*4, self.color)
+        self.draw_rect((self.x1, self.y + 4*self.text_offsety))
+        self.draw_text(f"Velocity: {self.mod_vel:.3} m/s", self.size, self.x1, self.y + self.text_offsety*4, self.text_color)
         
     def show_ang(self):
-        self.draw_rect((self.x2, self.y+self.offsety*2))
-        self.draw_text(f"Angle: {self.angle}°", self.size, self.x2, self.y + self.offsety*2, self.color)
-        self.draw_text(f"Radius: {self.radius} m", self.size, self.x2, self.y + self.offsety*3, self.color)
-        self.draw_text(f"Angular velocity: {self.ang_vel} rad/s", self.size, self.x2, self.y + self.offsety*4, self.color)
+        self.draw_rect((self.x2, self.y+self.text_offsety*2))
+        self.draw_text(f"Angle: {self.angle}°", self.size, self.x2, self.y + self.text_offsety*2, self.text_color)
+        self.draw_text(f"Radius: {self.radius} m", self.size, self.x2, self.y + self.text_offsety*3, self.text_color)
+        self.draw_text(f"Angular velocity: {self.ang_vel} rad/s", self.size, self.x2, self.y + self.text_offsety*4, self.text_color)
         
     def show(self):
         self.draw_HUD_rect()
@@ -158,11 +160,11 @@ class FieldHUD(HUD):
         self.draw_HUD_rect()
         
         # Constants
-        self.draw_text(f"Field: {self.name}", self.size, self.x1, self.y + self.offsety*0, self.color)
-        self.draw_text(f"Type: {self.type}", self.size, self.x1, self.y + self.offsety*1, self.color)
+        self.draw_text(f"Field: {self.name}", self.size, self.x1, self.y + self.text_offsety*0, self.text_color)
+        self.draw_text(f"Type: {self.type}", self.size, self.x1, self.y + self.text_offsety*1, self.text_color)
         if self.name == "Electric field":
-            self.draw_text(f"E: {self.strength} V/m", self.size, self.x1, self.y + self.offsety*2, self.color)
+            self.draw_text(f"E: {self.strength} V/m", self.size, self.x1, self.y + self.text_offsety*2, self.text_color)
         else:
-            self.draw_text(f"B: {self.strength} T", self.size, self.x1, self.y + self.offsety*2, self.color)
-        self.draw_text(f"Position (x, y): {self.pos[0], self.pos[1]} m", self.size, self.x1, self.y + self.offsety*3, self.color)
+            self.draw_text(f"B: {self.strength} T", self.size, self.x1, self.y + self.text_offsety*2, self.text_color)
+        self.draw_text(f"Position (x, y): {self.pos[0], self.pos[1]} m", self.size, self.x1, self.y + self.text_offsety*3, self.text_color)
         
