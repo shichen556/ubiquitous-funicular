@@ -16,13 +16,15 @@ class Game():
         
         # Framerate control
         self.running = True
-        self.playing = True
+        self.playing = False
         
         self.clock = pygame.time.Clock()
         self.FPS = 60
         self.dt = 0
         self.t0 = time.time()
         self.t1 = 0
+        
+        self.events = pygame.event.get()
         
         # Pygame screen setup
         # Get monitor size
@@ -63,14 +65,13 @@ class Game():
         # Load In-game
         self.in_game = InGame(self)
         
-        self.label1 = input.Control(self.display1, (550, 50), (200, 50), "Test")
-        
         self.is_draw = False
         self.is_pause = False
         
     # Game loop
     def game_loop(self):
         while self.playing:
+            self.events = pygame.event.get()
             self.check_events()
             if self.actions["back"]:
                 self.playing = False
@@ -88,19 +89,24 @@ class Game():
                 
             debug(f"{self.clock.get_fps():.2f}", self.display1)
             
+            debug(f"UP: {self.actions["up"]}", self.display1, 40)
+            debug(f"DOWN: {self.actions["down"]}", self.display1, 60)
+            debug(f"LEFT: {self.actions["left"]}", self.display1, 80)
+            debug(f"RIGHT: {self.actions["right"]}", self.display1, 100)
+            
+            pygame_widgets.update(self.events)
+            
             pygame.draw.line(self.display2, "black", (0, 0), (self.DISPLAY_W, 0), 10)
             self.window.blit(self.display1, (0, 0))
             self.window.blit(self.display2, (0, self.DISPLAY_H2))
             
-            pygame_widgets.update(pygame.event.get())
             pygame.display.update()
             self.reset_keys()
             self.clock.tick(self.FPS)
     
     # Check user keyboard input
     def check_events(self):
-        events = pygame.event.get()
-        for event in events:
+        for event in self.events:
             if event.type == pygame.QUIT:
                 self.running, self.playing = False, False
             if event.type == pygame.KEYDOWN:
@@ -114,13 +120,10 @@ class Game():
                     self.actions["right"] = True
                 if event.key == pygame.K_z:
                     self.actions["start"] = True
-                if event.key in [pygame.K_BACKSPACE, pygame.K_ESCAPE]:
+                if event.key in [pygame.K_ESCAPE]:
                     self.actions["back"] = True
                 if event.key == pygame.K_t:
-                    if self.is_pause:
-                        self.is_pause = False
-                    else:
-                        self.is_pause = True
+                    self.is_pause = not self.is_pause
             
     def reset_keys(self):
         for key in self.actions:

@@ -1,5 +1,4 @@
 import pygame
-import pygame_widgets
 
 from pygame_widgets.textbox import TextBox
 
@@ -26,9 +25,6 @@ class Control:
                           radius=self.radius,
                           borderThickness=self.border_thickness,
                           placeholderText=self.placeholder_text)
-        
-        events=pygame.event.get()
-        pygame_widgets.update(events)
     
     def output(self):
             print(self.textbox.getText())

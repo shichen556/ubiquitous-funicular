@@ -48,7 +48,7 @@ class InGame:
         self.mgF_stats = hud.FieldHUD(self.game, (self.hud_field_pos[0], self.hud_field_pos[1]+self.hud_posy_offsety), self.hud_field_size, self.mgF)
         
         # Load UI
-        # self.label1 = input.Control(self.game.display1, (550, 50), (200, 50), "Test")
+        self.label1 = input.Control(self.game.display1, (550, 50), (200, 50), "Test")
             
         # Load Tiles
         self.tile = tiles.TileMap(self.game)
@@ -73,9 +73,6 @@ class InGame:
             # self.mgF_stats.show()
             
             self.game.is_draw = True
-        
-        # input.pygame_widgets.update(input.pygame.event.get())
-        
             
     def update_eF_collision(self, particle_hud, particle):
         # Update stats
