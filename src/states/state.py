@@ -1,3 +1,7 @@
+"""
+Unused
+"""
+
 class State:
     def __init__(self, game):
         self.game = game
@@ -18,3 +22,4 @@ class State:
     # Pop
     def exit_state(self):
         self.game.state_stack.pop()
+        
