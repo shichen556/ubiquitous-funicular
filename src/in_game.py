@@ -2,6 +2,7 @@ import UI.hud as hud
 import objects
 import tiles
 import UI.input as input
+import pygame_widgets
 
 class InGame:
     def __init__(self, game):
@@ -50,7 +51,8 @@ class InGame:
         self.mgF_stats = hud.FieldHUD(self.game, (self.hud_field_pos[0], self.hud_field_pos[1]+self.hud_posy_offsety), self.hud_field_size, self.mgF)
         
         # Load UI
-        self.label1 = input.Control(self.game.display2, (550, 50), (200, 50), "Test")
+        self.offsety = self.game.display1.get_height() -70
+        self.label1 = input.Control(self.game.display1, (550, 50+self.offsety), (200, 50), "Test")
             
         # Load Tiles
         self.tile = tiles.TileMap(self.game)
@@ -80,6 +82,9 @@ class InGame:
             self.mgF_stats.show()
             
             self.is_draw = True
+        
+        # Update/draw label box
+        pygame_widgets.update(self.game.events)
             
     def update_eF_collision(self, particle_hud, particle):
         # Update stats

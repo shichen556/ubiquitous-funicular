@@ -83,11 +83,10 @@ class Game():
                 
             debug(f"{self.clock.get_fps():.2f}", self.display1)
             
-            pygame_widgets.update(self.events)
-            
             pygame.draw.line(self.display2, "black", (0, 0), (self.DISPLAY_W, 0), 10)
-            self.window.blit(self.display1, (0, 0))
+            
             self.window.blit(self.display2, (0, self.DISPLAY_H2))
+            self.window.blit(self.display1, (0, 0))
             
             pygame.display.update()
             self.reset_keys()
