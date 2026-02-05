@@ -77,7 +77,6 @@ class InGame:
             
             self.is_draw = True
         
-        self.label1.run()
             
     def update_eF_collision(self, particle_hud, particle):
         # Update stats

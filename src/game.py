@@ -1,5 +1,6 @@
 import ctypes
 import pygame
+import pygame_widgets
 import time
 
 from in_game import InGame
@@ -85,13 +86,15 @@ class Game():
             self.window.blit(self.display1, (0, 0))
             self.window.blit(self.display2, (0, self.DISPLAY_H2))
             
+            pygame_widgets.update(pygame.event.get())
             pygame.display.update()
             self.reset_keys()
             self.clock.tick(self.FPS)
     
     # Check user keyboard input
     def check_events(self):
-        for event in pygame.event.get():
+        events = pygame.event.get()
+        for event in events:
             if event.type == pygame.QUIT:
                 self.running, self.playing = False, False
             if event.type == pygame.KEYDOWN:

@@ -27,7 +27,3 @@ class Control:
                           radius=self.radius,
                           borderThickness=self.border_thickness,
                           placeholderText=self.placeholder_text)
-        
-    def run(self):
-        events = pygame.event.get()
-        pygame_widgets.update(events)
