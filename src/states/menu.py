@@ -57,6 +57,7 @@ class MainMenu(Menu):
         self.run_display = True
         
         while self.run_display:
+            self.game.events = pygame.event.get()
             self.game.check_events()
             self.check_input()
             self.game.display.fill(self.game.BG_COLOR)

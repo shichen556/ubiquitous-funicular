@@ -52,6 +52,8 @@ class InGame:
             
         # Load Tiles
         self.tile = tiles.TileMap(self.game)
+        
+        self.is_draw = False
     
     def draw_objects(self):
         # self.tile.draw_map()
@@ -65,14 +67,14 @@ class InGame:
         self.electron.draw()
 
         # Draw HUD    
-        if not self.game.is_draw:
-            # self.proton_stats.show()
-            # self.electron_stats.show()
+        if not self.is_draw:
+            self.proton_stats.show()
+            self.electron_stats.show()
             
-            # self.eF_stats.show()
-            # self.mgF_stats.show()
+            self.eF_stats.show()
+            self.mgF_stats.show()
             
-            self.game.is_draw = True
+            self.is_draw = True
             
     def update_eF_collision(self, particle_hud, particle):
         # Update stats

@@ -5,7 +5,6 @@ import time
 
 from in_game import InGame
 import states.menu as menu
-import UI.input as input
 
 from debug.debug import debug
 
@@ -16,7 +15,7 @@ class Game():
         
         # Framerate control
         self.running = True
-        self.playing = False
+        self.playing = True
         
         self.clock = pygame.time.Clock()
         self.FPS = 60
@@ -65,7 +64,6 @@ class Game():
         # Load In-game
         self.in_game = InGame(self)
         
-        self.is_draw = False
         self.is_pause = False
         
     # Game loop
@@ -88,11 +86,6 @@ class Game():
                 self.dt = 0
                 
             debug(f"{self.clock.get_fps():.2f}", self.display1)
-            
-            debug(f"UP: {self.actions["up"]}", self.display1, 40)
-            debug(f"DOWN: {self.actions["down"]}", self.display1, 60)
-            debug(f"LEFT: {self.actions["left"]}", self.display1, 80)
-            debug(f"RIGHT: {self.actions["right"]}", self.display1, 100)
             
             pygame_widgets.update(self.events)
             
