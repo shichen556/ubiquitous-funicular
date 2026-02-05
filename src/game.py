@@ -106,7 +106,7 @@ class Game():
                     self.actions["left"] = True
                 if event.key in [pygame.K_RIGHT, pygame.K_d]:
                     self.actions["right"] = True
-                if event.key == pygame.K_RETURN:
+                if event.key == pygame.K_z:
                     self.actions["start"] = True
                 if event.key in [pygame.K_BACKSPACE, pygame.K_ESCAPE]:
                     self.actions["back"] = True

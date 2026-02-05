@@ -69,11 +69,11 @@ class InGame:
         if not self.game.is_draw:
             self.game.display2.fill(self.HUD_BG_COLOR)
             
-            self.proton_stats.show()
-            self.electron_stats.show()
+            # self.proton_stats.show()
+            # self.electron_stats.show()
             
-            self.eF_stats.show()
-            self.mgF_stats.show()
+            # self.eF_stats.show()
+            # self.mgF_stats.show()
             
             self.is_draw = True
         
