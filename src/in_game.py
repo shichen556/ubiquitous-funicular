@@ -7,6 +7,8 @@ class InGame:
     def __init__(self, game):
         self.game = game
         
+        self.HUD_BG_COLOR = "#494949"
+        
         self.E = 2
         self.B = 15
         
@@ -48,7 +50,7 @@ class InGame:
         self.mgF_stats = hud.FieldHUD(self.game, (self.hud_field_pos[0], self.hud_field_pos[1]+self.hud_posy_offsety), self.hud_field_size, self.mgF)
         
         # Load UI
-        self.label1 = input.Control(self.game.display1, (550, 50), (200, 50), "Test")
+        self.label1 = input.Control(self.game.display2, (550, 50), (200, 50), "Test")
             
         # Load Tiles
         self.tile = tiles.TileMap(self.game)
@@ -56,6 +58,8 @@ class InGame:
         self.is_draw = False
     
     def draw_objects(self):
+        self.game.display1.fill(self.game.BG_COLOR)
+        
         # self.tile.draw_map()
         
         # Draw field
@@ -68,6 +72,7 @@ class InGame:
 
         # Draw HUD    
         if not self.is_draw:
+            self.game.display2.fill(self.HUD_BG_COLOR)
             self.proton_stats.show()
             self.electron_stats.show()
             
