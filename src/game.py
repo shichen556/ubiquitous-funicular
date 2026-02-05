@@ -5,6 +5,8 @@ import time
 
 from in_game import InGame
 import states.menu as menu
+import UI.input as input
+
 from debug.debug import debug
 
 class Game():
@@ -14,7 +16,7 @@ class Game():
         
         # Framerate control
         self.running = True
-        self.playing = False
+        self.playing = True
         
         self.clock = pygame.time.Clock()
         self.FPS = 60
@@ -49,6 +51,7 @@ class Game():
         
         # Color palette
         self.BG_COLOR = "#0A0A23"
+        self.HUD_BG_COLOR = "#494949"
         self.TITLE_COLOR = "#00BFFF"
         self.MENU_COLOR = ["#00BFFF", "#2A3B7A"]
         self.TXT_COLOR = "#B0C4FF"
@@ -60,6 +63,8 @@ class Game():
         # Load In-game
         self.in_game = InGame(self)
         
+        self.label1 = input.Control(self.display1, (550, 50), (200, 50), "Test")
+        
         self.is_draw = False
         self.is_pause = False
         
@@ -67,10 +72,11 @@ class Game():
     def game_loop(self):
         while self.playing:
             self.check_events()
-            if self.actions["start"] or self.actions["back"]:
+            if self.actions["back"]:
                 self.playing = False
             
             self.display1.fill(self.BG_COLOR)
+            self.display2.fill(self.HUD_BG_COLOR)
             
             self.in_game.draw_objects()
             self.get_dt()

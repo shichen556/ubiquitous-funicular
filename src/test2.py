@@ -13,7 +13,8 @@ win = pygame.display.set_mode((1000, 600))
 
 textbox = TextBox(win, 100, 100, 800, 80, fontSize=50,
                   borderColour="#FF0000", textColour=(0, 200, 0),
-                  onSubmit=output, radius=10, borderThickness=5)
+                  onSubmit=output, radius=10, borderThickness=5,
+                  placeholderText="Test")
 
 run = True
 while run:

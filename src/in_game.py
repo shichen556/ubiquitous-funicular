@@ -7,7 +7,6 @@ class InGame:
     def __init__(self, game):
         self.game = game
         
-        self.HUD_BG_COLOR = "#494949"
         self.E = 2
         self.B = 15
         
@@ -49,7 +48,7 @@ class InGame:
         self.mgF_stats = hud.FieldHUD(self.game, (self.hud_field_pos[0], self.hud_field_pos[1]+self.hud_posy_offsety), self.hud_field_size, self.mgF)
         
         # Load UI
-        self.label1 = input.Control(self.game.display2, (550, 50), (200, 50), lambda: print(self.label1.textbox.getText()))
+        # self.label1 = input.Control(self.game.display1, (550, 50), (200, 50), "Test")
             
         # Load Tiles
         self.tile = tiles.TileMap(self.game)
@@ -67,15 +66,15 @@ class InGame:
 
         # Draw HUD    
         if not self.game.is_draw:
-            self.game.display2.fill(self.HUD_BG_COLOR)
-            
             # self.proton_stats.show()
             # self.electron_stats.show()
             
             # self.eF_stats.show()
             # self.mgF_stats.show()
             
-            self.is_draw = True
+            self.game.is_draw = True
+        
+        # input.pygame_widgets.update(input.pygame.event.get())
         
             
     def update_eF_collision(self, particle_hud, particle):
